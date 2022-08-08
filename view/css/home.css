@@ -1,0 +1,13 @@
+.flex-container-center {
+    height: 80%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+}
+
+.form-button {
+    margin: 1.5rem;
+}
