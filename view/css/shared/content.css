@@ -1,9 +1,25 @@
 .flex-container-center {
-    height: 80%;
-    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     text-align: center;
     align-items: center;
+}
+
+.flex-center-window {
+    height: 80%;
+    width: 100%;
+}
+
+.flex-center-width {
+    width: 100%;
+}
+
+.content-space {
+    width: 80%;
+    margin-top: 2rem;
+}
+
+.form-button {
+    margin: 1.5rem;
 }
