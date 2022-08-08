@@ -13,7 +13,7 @@
         <div class="flex-container-center flex-center-width">
             <h1>Sprints</h1>
             <div>
-                <a class="waves-effect waves-teal btn-flat secondary-color">
+                <a href="./create-new-sprint.php" class="waves-effect waves-teal btn-flat secondary-color">
                         Create New
                 </a>
             </div>
