@@ -14,30 +14,34 @@
                 </a>
             </div>
         </div>
+        <div id="error-response" class="card-panel #ffebee red lighten-5"></div>
+        
         <div class="flex-container-center flex-center-window">
             <h1>Sprint Planner</h1>
-            <form action="./service/EnterRoom.php" method="POST" class="center white"  >
+            <form id="enter-room-form" action="./service/EnterRoom.php" method="POST" class="center white"  >
                 <h3 class="flex-item">Enter Room</h1>
         
                 <div class="center center-align">
-                    <input placeholder="your email" name="email" type="text" class="input-field center center-align"/>
+                    <input id="email" placeholder="your email" name="email" type="text" class="input-field center center-align"/>
                 </div>
     
                 <div class="center center-align">
-                    <input placeholder="sprint id" name="roomSprintId" type="text" class="input-field white center"/>
+                    <input id="roomSprintId" placeholder="sprint id" name="roomSprintId" type="text" class="input-field white center"/>
                 </div>
 
                 <div class="center center-align">
-                    <input placeholder="room password" name="roomPassword" type="text" class="input-field center center-align"/>
+                    <input id="roomPassword" placeholder="room password" name="roomPassword" type="text" class="input-field center center-align"/>
                 </div>
                 
                 <div class="center form-button">
-                    <input type="submit" value="Enter" name="submit" class="btn"/>
+                    <input id="submit-btn" type="submit" value="Enter" name="submit" class="btn"/>
                 </div>
 
             </form>
             <p class="secondary-color">Ask your manager to provide Sprint Id and Room Password</p>
         </div>
+
+        <script src="./view/script/home.js"></script>
     </body>
 
 </html>

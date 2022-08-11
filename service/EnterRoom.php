@@ -2,23 +2,25 @@
 
     require_once "../repository/UserRepository.php";
     require_once "../repository/SprintRepository.php";
+    require_once "./Response.php";
+    
+    $json = file_get_contents('php://input');
+    $request = json_decode($json);
 
-    $email = $_POST['email'];
-    $roomSprintId = $_POST['roomSprintId'];
-    $roomPassword = $_POST['roomPassword'];
-
-    if (userExists($email) && roomExists($roomSprintId, $roomPassword)) {
-        // $redirect = $_SERVER['DOCUMENT_ROOT'].'/view/grooming-room.php';
-        header("Location: ../view/grooming-room.php");
-        exit();
-    } else {
-        echo '<script> 
-        alert("Email is not recognised by the system");
-        
-         </script>';
-        header("Location: ../");
-        exit();
+    if (!$request->email || !$request->roomId || !$request->roomPass) {
+        returnResponse(400, '', '>>>>');
     }
+
+    if (!userExists($request->email)) {
+        returnResponse(404, '', 'User not found');
+    }
+
+    if (!roomExists($request->roomId, $request->roomPass)) {
+        returnResponse(404, '', 'Incorrect room credentials');
+    }
+
+    $redirect = array ('redirect' => './view/grooming-room.php');
+    returnResponse(200, $redirect, '');
 
 
     function userExists($email) {
@@ -27,6 +29,16 @@
 
     function roomExists($roomSprintId, $roomPassword) {
         return SprintRepository::getSprintByIdAndPassword($roomSprintId, $roomPassword) > 0;
+    }
+
+    function returnResponse($statusCode, $data, $errorMessage) {
+        $response = new Response();
+        $response->setData($data);
+        $response->setError($errorMessage);
+        
+        http_response_code($statusCode);
+        echo json_encode($response->getMessage());
+        exit();
     }
 
 ?>
