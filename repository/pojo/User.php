@@ -2,7 +2,7 @@
 
 class User {
 
-    public static $roles = array('master' => 'master', 'team_member' => 'team member');
+    public static $roles = array('master' => 'master', 'guest' => 'guest');
 
     private $email;
     private $username;
