@@ -8,12 +8,8 @@ class User {
     private $username;
     private $role;
 
-    public function __construct($email, $username, $role){
-        $this->email = $email;
-        $this->username = $username;
-        $this->role = $role;
-    }
-
+    public function __construct() {}
+    
     public function getEmail(){
         return $this->email;
     }

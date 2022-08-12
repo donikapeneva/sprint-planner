@@ -8,7 +8,15 @@
     </head>
     <body>
         <?php
-            include('./header.html');
+            include('../service/Session.php');
+            SessionManager::start();
+            if(!SessionManager::isUserLoggedInAsMaster()) {
+                header('Location: ../');
+            }
+        ?>
+
+        <?php
+            include('./header.php');
         ?>
         <div class="flex-container-center flex-center-width">
             <h1>Sprints</h1>
@@ -32,7 +40,7 @@
                     <td>Eclair</td>
                     <td>
                         <a class="waves-effect waves-teal btn-flat secondary-color centered">Edit</a>
-                        <a class="waves-effect waves-light btn">open room</a>
+                        <a href="./grooming-room.php" class="waves-effect waves-light btn">open room</a>
                     </td>
                 </tr>
                 <tr>
@@ -54,6 +62,8 @@
                 </tbody>
             </table>
         </div>
+        
+        <script src="./script/shared.js"></script>
     </body>
 
 </html>

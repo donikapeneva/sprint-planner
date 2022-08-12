@@ -6,7 +6,8 @@
         </a>
         <ul class="right hide-on-small-and-down">
             <li>
-                <a href="/sprint-planner" class="waves-effect waves-teal btn-flat secondary-color">
+                <a id="log-out-btn" 
+                class="waves-effect waves-teal btn-flat secondary-color">
                     Log Out
                 </a>
             </li>

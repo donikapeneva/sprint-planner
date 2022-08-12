@@ -5,12 +5,10 @@ require_once $_SERVER['DOCUMENT_ROOT']."/sprint-planner/repository/pojo/User.php
 
 Database::getInstance();
 
-
-
 class UserRepository {
 
     public static function getOne($email) {
-        $sql = 'SELECT * FROM user WHERE email = ?';
+        $sql = 'SELECT email, username, role FROM user WHERE email = ?';
         $query = Database::getInstance()->getConnection()
             ->prepare($sql);
         $query->execute([$email]);
@@ -19,15 +17,15 @@ class UserRepository {
     }
 
     public static function getLoginMaster($email, $pass) {
-        $sql = 'SELECT * FROM user 
+        $sql = 'SELECT email, username, role FROM user 
                 WHERE email = ?
                 AND password = ?
                 AND role = ?';
-        $query = Database::getInstance()->getConnection()
-            ->prepare($sql);
+        $query = Database::getInstance()->getConnection()->prepare($sql);
+
         $query->execute([$email, $pass, User::$roles['master']]);
 
-        return $query->fetch();
+        return $query->fetchObject('User');
     }
 
     // public static function create($data) {

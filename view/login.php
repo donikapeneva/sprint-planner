@@ -7,6 +7,15 @@
         <link href="./css/shared/content.css" rel="stylesheet" />
     </head>
     <body>
+        
+        <?php
+            include('../service/Session.php');
+            SessionManager::start();
+            if(SessionManager::isUserLoggedInAsMaster()) {
+                header('Location: ./sprints.php');
+            }
+        ?>
+        
         <div class="header">
             <div>
                 <a href="../index.html" class="waves-effect waves-teal btn-flat secondary-color">

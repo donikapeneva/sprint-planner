@@ -2,6 +2,7 @@
 
     require_once "../repository/UserRepository.php";
     require_once "./Response.php";
+    require_once "./Session.php";
     
     $json = file_get_contents('php://input');
     $request = json_decode($json);
@@ -13,16 +14,20 @@
 
     $encrypted_pwd = md5($request->password);
 
-    if (!loginMaster($request->email, $encrypted_pwd)) {
+    if (!$user = loginMaster($request->email, $encrypted_pwd)) {
         echo $encrypted_pwd;
         $response->returnResponse(404, '', 'Invalid user or password');
     }
-    
+
+    SessionManager::start();
+    $_SESSION['email'] = $user->getEmail();
+    $_SESSION['loggedInAsMaster'] = true;
+
     $data = array ('redirectUrl' => './sprints.php');
     $response->returnResponse(200, $data, '');
 
     function loginMaster($email, $pass) {
-        return UserRepository::getLoginMaster($email, $pass) > 0;
+        return UserRepository::getLoginMaster($email, $pass);
     }
 
 ?>

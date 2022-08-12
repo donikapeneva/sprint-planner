@@ -9,7 +9,7 @@
     </head>
     <body>
         <?php
-            include('./header.html');
+            include('./header.php');
         ?>
         <form class="flex-container-center flex-center-width">
             <h1>Create New Sprint</h1>
