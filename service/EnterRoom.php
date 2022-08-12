@@ -19,8 +19,8 @@
         returnResponse(404, '', 'Incorrect room credentials');
     }
 
-    $redirect = array ('redirect' => './view/grooming-room.php');
-    returnResponse(200, $redirect, '');
+    $data = array ('redirectUrl' => './view/grooming-room.php');
+    returnResponse(200, $data, '');
 
 
     function userExists($email) {

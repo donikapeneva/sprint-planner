@@ -38,10 +38,13 @@ function handleSubmit(e) {
     ajaxReques.onreadystatechange = () => {
         if (ajaxReques.readyState === 4 && ajaxReques.status == 200) {
             const response = JSON.parse(ajaxReques.responseText);
+            window.location.replace(response.data.redirectUrl);
             
         } else if (ajaxReques.readyState === 4 && (ajaxReques.status === 400 || ajaxReques.status === 404)) {
             const response = JSON.parse(ajaxReques.responseText);
             showError(response.error);
+        } else if (ajaxReques.readyState === 4  && (ajaxReques.status === 500)) {
+            showError('Service unavailable');
         }
     }
 }
