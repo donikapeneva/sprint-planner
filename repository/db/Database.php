@@ -22,21 +22,21 @@ class Database {
         }
 
         if (!mysqli_select_db($conn, $this->db)) {
-            echo ">>> Will create Database<br>";
+            // echo ">>> Will create Database<br>";
             $files = glob('./db-scripts/*.{sql}', GLOB_BRACE);
             
             foreach($files as $file) {
-                echo ">>> Executing ".$file.'<br>';
+                // echo ">>> Executing ".$file.'<br>';
                 $init_sql = file_get_contents($file);
                 if ($conn->multi_query($init_sql ) === TRUE) {
-                    echo ">>> Database updated successfully<br>";
+                    // echo ">>> Database updated successfully<br>";
                 } else {
-                    echo ">>> Error updating database: <br>" . $conn->error . '<br>';
+                    // echo ">>> Error updating database: <br>" . $conn->error . '<br>';
                 }
             }
         }
         
-        echo ">>>>> END <br>";
+        // echo ">>>>> END <br>";
 
         $this->connection = new PDO("mysql:host=$this->host;dbname=$this->db", $this->user, $this->pass);
     }

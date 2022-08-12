@@ -23,3 +23,13 @@
 .form-button {
     margin: 1.5rem;
 }
+
+.hidden {
+    display: none;
+}
+
+.response-message {
+    width: 90vw;
+    text-align: center;
+    padding: 1rem;
+}
