@@ -1,6 +1,7 @@
 <?php
 
 require_once $_SERVER['DOCUMENT_ROOT']."/sprint-planner/repository/db/Database.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/sprint-planner/repository/pojo/User.php";
 
 Database::getInstance();
 
@@ -13,6 +14,18 @@ class UserRepository {
         $query = Database::getInstance()->getConnection()
             ->prepare($sql);
         $query->execute([$email]);
+
+        return $query->fetch();
+    }
+
+    public static function getLoginMaster($email, $pass) {
+        $sql = 'SELECT * FROM user 
+                WHERE email = ?
+                AND password = ?
+                AND role = ?';
+        $query = Database::getInstance()->getConnection()
+            ->prepare($sql);
+        $query->execute([$email, $pass, User::$roles['master']]);
 
         return $query->fetch();
     }

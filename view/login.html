@@ -14,17 +14,20 @@
                 </a>
             </div>
         </div>
+        <div class="flex-container-center">
+            <div id="error-response" class="card #fbe9e7 deep-orange lighten-5 response-message hidden"></div>
+        </div>
         <div class="flex-container-center flex-center-window">
             <h1>Sprint Planner</h1>
-            <form class="center white"  >
+            <form id="login-form" class="center white"  >
                 <h3 class="flex-item">Enter as Master</h1>
         
                 <div class="center center-align">
-                    <input placeholder="your email" name="username" type="text" class="input-field center center-align"/>
+                    <input id="email" placeholder="your email" name="email" type="text" class="input-field center center-align"/>
                 </div>
     
                 <div class="center center-align">
-                    <input placeholder="password" name="roomPassword" type="text" class="input-field center center-align"/>
+                    <input id="password" placeholder="password" name="roomPassword" type="password" class="input-field center center-align"/>
                 </div>
                 
                 <div class="center form-button">
@@ -33,6 +36,8 @@
 
             </form>
         </div>
+        
+        <script src="./script/login.js"></script>
     </body>
 
 </html>
