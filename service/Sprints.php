@@ -3,28 +3,33 @@
     require_once "../repository/SprintRepository.php";
     require_once "./Response.php";
     require_once "./Session.php";
-    
-    // $json = file_get_contents('php://input');
-    // $request = json_decode($json);
-    $response = new Response();
 
-    // if (!$request->email || !$request->password) {
-    //     $response->returnResponse(401, '', 'Unauthorized');
-    // }
+    $requestMethod = $_SERVER["REQUEST_METHOD"];
+    $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-    // $encrypted_pwd = md5($request->password);
-
-    // if (!$user = loginMaster($request->email, $encrypted_pwd)) {
-    //     echo $encrypted_pwd;
-    //     $response->returnResponse(404, '', 'Invalid user or password');
-    // }
-    
-    $sprints = SprintRepository::getAll();
-    
     SessionManager::start();
+    $response = new Response();
     
-    $data = $sprints;
-    $response->returnResponse(200, $data, '');
-
-
+    preg_match('/(?:Sprints.php)\/(?P<digit>\d+)/', $uri, $matches);
+     
+    if($matches) {
+        $sprint_id = $matches[1];
+    }
+    
+    switch ($requestMethod) {
+        case 'GET': 
+            if (!empty($sprint_id)) {} 
+            else {
+                $data = getAll();
+                $response->returnResponse(200, $data, '');
+            }
+            break;
+        default: 
+            $response->returnResponse(404, '', 'Not Found');
+            break;
+    }
+    
+    function getAll() {
+        return SprintRepository::getAll();
+    }
 ?>
