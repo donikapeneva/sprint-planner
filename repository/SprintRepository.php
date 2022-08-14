@@ -36,7 +36,32 @@ class SprintRepository {
     }
 
     public static function create($newSprint) {
-        $room_id = $newSprint->sprintId;
+        $room_id = $newSprint->sprintRoomId;
+        $room_pass = $newSprint->sprintPassword;
+
+        $tasks = $newSprint->tasks;
+
+        $connection = Database::getInstance()->getConnection();
+        
+        
+        $newSprint_sql = 'INSERT INTO sprint (room_id, room_pass, status)
+                            VALUES ( ?, ?, ?)';
+
+        $query = $connection->prepare($newSprint_sql);
+        $query->execute([$room_id, $room_pass, Sprint::$statuses['new']]);
+
+        $sprint_id = $connection->lastInsertId();
+
+        foreach ($tasks as $task) {
+            $sql = 'INSERT INTO task (epic_link, task_link, short_description, sprint_id) 
+                    VALUES (?, ?, ?, ?)';
+            $query = $connection->prepare($sql);
+            $query->execute([$task->epicLink, $task->taskLink, $task->taskDescription, $sprint_id]);
+        }
+    }
+
+    public static function update($sprintId, $updatedSprint) {
+        $room_id = $updatedSprint->sprintId;
         $room_pass = $newSprint->sprintPassword;
 
         $tasks = $newSprint->tasks;

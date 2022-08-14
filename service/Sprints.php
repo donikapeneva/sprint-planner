@@ -48,7 +48,7 @@
     function createNew($newSprint) {
         $response = new Response();
 
-        if (SprintRepository::getSprintByIdAndStatus($newSprint->sprintId, Sprint::$statuses['new']) > 0) {
+        if (SprintRepository::getSprintByIdAndStatus($newSprint->sprintRoomId, Sprint::$statuses['new']) > 0) {
             $response->returnResponse(200, 'Already created', '');
         }
 

@@ -21,6 +21,9 @@
         <div class="flex-container-center">
             <div id="error-response" class="card #fbe9e7 deep-orange lighten-5 response-message hidden"></div>
         </div>
+        <div class="flex-container-center">
+            <div id="success-response" class="card #f1f8e9 light-green lighten-5 response-message hidden"></div>
+        </div>
         <form class="flex-container-center flex-center-width">
             <h1>Create New Sprint</h1>
 

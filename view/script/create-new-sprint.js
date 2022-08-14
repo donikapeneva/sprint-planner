@@ -4,6 +4,7 @@ const taskLink = document.getElementById('taskLink');
 const taskDescription = document.getElementById('taskDescription');
 const tasksList = document.querySelector('#tasksList');
 const error = document.getElementById('error-response');
+const success = document.getElementById('success-response');
 
 const sprintId = document.getElementById('sprint-id');
 const sprintPassword = document.getElementById('sprint-password');
@@ -126,7 +127,11 @@ function handleSubmitSprint(e) {
         return;
     }
 
-    const data = { ...state };
+    const data = { 
+        tasks: state.tasks, 
+        sprintRoomId: state.sprintId, 
+        sprintPassword: state.sprintPassword 
+    };
     console.log('>> data', data);
     const ajaxReques = new XMLHttpRequest();
     ajaxReques.open('POST', '../service/Sprints.php');
@@ -136,7 +141,10 @@ function handleSubmitSprint(e) {
         console.log('>>>> ajaxReques', ajaxReques);
         if (ajaxReques.readyState === 4 && ajaxReques.status == 200) {
             const response = JSON.parse(ajaxReques.responseText);
-            // window.location.replace(response.data.redirectUrl);
+            response.data ? 
+                showSuccess(response.data) 
+                : showSuccess('Sprint created successfully');
+            setTimeout(hideSuccess, 5000);
             
         } else if (ajaxReques.readyState === 4 && (ajaxReques.status === 400 || ajaxReques.status === 404)) {
             const response = JSON.parse(ajaxReques.responseText);
@@ -148,6 +156,13 @@ function handleSubmitSprint(e) {
 }
 
 //todo move to shared
+const hideSuccess = () => success.classList.add('hidden');
+
+const showSuccess = (message) => {
+    success.textContent = message;
+    success.classList.remove('hidden');
+}
+
 const hideError = () => error.classList.add('hidden');
 
 const showError = (errorMessage) => { 
