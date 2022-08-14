@@ -25,7 +25,11 @@
                         Create New
                 </a>
             </div>
-            <table class="content-space highlight responsive-table centered ">
+
+            <ul id="sprintsList" class="form-width row "></ul>
+
+
+            <table id="sprints-table" class="content-space highlight responsive-table centered ">
                 <thead >
                     <tr>
                         <th>Sprint Id</th>
@@ -34,36 +38,13 @@
                     </tr>
                 </thead>
 
-                <tbody>
-                <tr>
-                    <td>Alvin</td>
-                    <td>Eclair</td>
-                    <td>
-                        <a class="waves-effect waves-teal btn-flat secondary-color centered">Edit</a>
-                        <a href="./grooming-room.php" class="waves-effect waves-light btn">open room</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Alan</td>
-                    <td>Jellybean</td>
-                    <td>
-                        <a class="waves-effect waves-teal btn-flat secondary-color centered">Edit</a>
-                        <a class="waves-effect waves-light btn">open room</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Jonathan</td>
-                    <td>Lollipop</td>
-                    <td>
-                        <a class="waves-effect waves-teal btn-flat secondary-color centered">Edit</a>
-                        <a class="waves-effect waves-light btn">open room</a>
-                    </td>
-                </tr>
+                <tbody id="sprints-table-content">
                 </tbody>
             </table>
         </div>
         
         <script src="./script/shared.js"></script>
+        <script src="./script/sprints.js"></script>
     </body>
 
 </html>

@@ -2,8 +2,8 @@
 
 class Response {
 
-    private $data;
-    private $error;
+    private $data = '';
+    private $error = '';
 
     private function getMessage() {
         return array (

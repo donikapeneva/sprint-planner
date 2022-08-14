@@ -2,20 +2,18 @@
 
 class Sprint {
 
-    private $roomId;
-    private $status;
+    public $id;
+    public $roomId;
+    public $status;
 
-    public function __construct($roomId, $status){
-        $this->roomId = $roomId;
-        $this->status = $status;
-    }
+    public function __construct() {}
 
-    public function getRoomId(){
-        return $this->roomId;
-    }
+    // public function getRoomId(){
+    //     return $this->roomId;
+    // }
     
-    public function getStatus(){
-        return $this->status;
-    }
+    // public function getStatus(){
+    //     return $this->status;
+    // }
 }
 ?>

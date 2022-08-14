@@ -1,6 +1,7 @@
 <?php
 
 require_once $_SERVER['DOCUMENT_ROOT']."/sprint-planner/repository/db/Database.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/sprint-planner/repository/pojo/Sprint.php";
 
 Database::getInstance();
 
@@ -13,6 +14,16 @@ class SprintRepository {
         $query->execute([$roomId, $pass]);
 
         return $query->fetch();
+    }
+
+    public static function getAll() {
+        $sql = 'SELECT room_id as roomId, status FROM sprint 
+                ';
+        $query = Database::getInstance()->getConnection()->prepare($sql);
+
+        $query->execute();
+
+        return $query->fetchAll(PDO::FETCH_CLASS, 'Sprint');
     }
 
     // public static function create($data) {
