@@ -16,6 +16,15 @@ class SprintRepository {
         return $query->fetch();
     }
 
+    public static function getSprintByIdAndStatus($roomId, $status) {
+        $sql = 'SELECT * FROM sprint WHERE room_id = ? AND status = ?';
+        $query = Database::getInstance()->getConnection()
+            ->prepare($sql);
+        $query->execute([$roomId, $status]);
+
+        return $query->fetch();
+    }
+
     public static function getAll() {
         $sql = 'SELECT room_id as roomId, status FROM sprint 
                 ';
@@ -26,34 +35,30 @@ class SprintRepository {
         return $query->fetchAll(PDO::FETCH_CLASS, 'Sprint');
     }
 
-    // public static function create($data) {
+    public static function create($newSprint) {
+        $room_id = $newSprint->sprintId;
+        $room_pass = $newSprint->sprintPassword;
 
+        $tasks = $newSprint->tasks;
 
-    //     $name = $data['adventureName'];
-    //     $tip = $data['tips'];
-    //     $user_id = $_SESSION['userId'];
-    //     $city_id = 91;
+        $connection = Database::getInstance()->getConnection();
+        
+        
+        $newSprint_sql = 'INSERT INTO sprint (room_id, room_pass, status)
+                            VALUES ( ?, ?, ?)';
 
-    //     $query = Database::getInstance()->getConnection()->prepare("
-    //         INSERT INTO adventure ( name, user_id, city_id, time, tip, last_updated, is_deleted)
-    //         VALUES ( ?, ?, ?, ?, ?, ?, ?)
-    //         ");
-    //     $query->execute([$name, $user_id, $city_id, date("Y-m-d H:i:s"), $tip, date("Y-m-d H:i:s"), false]);
+        $query = $connection->prepare($newSprint_sql);
+        $query->execute([$room_id, $room_pass, Sprint::$statuses['new']]);
 
-    //     header("Location: ../index.php");
-    // }
+        $sprint_id = $connection->lastInsertId();
 
-    // public static function delete($id) {
-
-    //     $query = Database::getInstance()->getConnection()->prepare("
-    //         UPDATE adventure 
-    //         SET  is_deleted = ?
-    //         WHERE id = ?
-    //         ");
-    //     $query->execute([true, $id]);
-
-    //     header("Location: ../index.php");
-    // }
+        foreach ($tasks as $task) {
+            $sql = 'INSERT INTO task (epic_link, task_link, short_description, sprint_id) 
+                    VALUES (?, ?, ?, ?)';
+            $query = $connection->prepare($sql);
+            $query->execute([$task->epicLink, $task->taskLink, $task->taskDescription, $sprint_id]);
+        }
+    }
 }
 
 ?>

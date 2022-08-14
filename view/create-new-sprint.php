@@ -9,17 +9,27 @@
     </head>
     <body>
         <?php
+            include('../service/Session.php');
+            SessionManager::start();
+            if(!SessionManager::isUserLoggedInAsMaster()) {
+                header('Location: ../');
+            }
+        ?>
+        <?php
             include('./header.php');
         ?>
+        <div class="flex-container-center">
+            <div id="error-response" class="card #fbe9e7 deep-orange lighten-5 response-message hidden"></div>
+        </div>
         <form class="flex-container-center flex-center-width">
             <h1>Create New Sprint</h1>
 
                 <div class="row">
                     <div class="col 6">
-                        <input placeholder="Sprint Id" name="sprintId" type="text" class="input-field center center-align"/>
+                        <input id="sprint-id" placeholder="Sprint Id" name="sprintId" type="text" class="input-field center center-align"/>
                     </div>
                     <div class="col 6">
-                        <input placeholder="Sprint Password" name="sprintPassword" type="text" class="input-field center center-align"/>
+                        <input id="sprint-password" placeholder="Sprint Password" name="sprintPassword" type="text" class="input-field center center-align"/>
                     </div>
                 </div>
 
@@ -47,7 +57,7 @@
                 <ul id="tasksList" class="form-width row "></ul>
 
                 <div class="center form-button">
-                    <input type="submit" value="Create Sprint" name="submit" class="btn"/>
+                    <input id="create-sprint-btn" type="submit" value="Create Sprint" name="submit" class="btn"/>
                 </div>
 
             </form>

@@ -6,6 +6,15 @@ class Sprint {
     public $roomId;
     public $status;
 
+    public static $statuses = array(
+        'new' => 'NEW', 
+        'grooming' => 'GROOMING',
+        'planning' => 'PLANNING',
+        'active' => 'ACTIVE',
+        'closed' => 'CLOSED'
+    );
+
+
     public function __construct() {}
 
     // public function getRoomId(){

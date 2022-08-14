@@ -29,6 +29,13 @@
                 $response->returnResponse(200, $data, '');
             }
             break;
+        case 'POST': {
+            $json = file_get_contents('php://input');
+            $request = json_decode($json);
+
+            createNew($request);
+
+        }
         default: 
             $response->returnResponse(404, '', 'Not Found');
             break;
@@ -36,5 +43,16 @@
     
     function getAll() {
         return SprintRepository::getAll();
+    }
+
+    function createNew($newSprint) {
+        $response = new Response();
+
+        if (SprintRepository::getSprintByIdAndStatus($newSprint->sprintId, Sprint::$statuses['new']) > 0) {
+            $response->returnResponse(200, 'Already created', '');
+        }
+
+        SprintRepository::create($newSprint);
+        $response->returnResponse(200, '', '');
     }
 ?>

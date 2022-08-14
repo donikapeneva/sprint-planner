@@ -28,8 +28,8 @@ create table sprint_planner.`task` (
     `task_link` varchar(200) not null,
     `short_description` varchar(500) not null,
     
-    `is_approved_for_planning` bit not null,
-    `is_included_in_sprint` bit not null,
+    `is_approved_for_planning` bit not null DEFAULT 0,
+    `is_included_in_sprint` bit not null DEFAULT 0,
     
     `assignee` int,
     `story_points` int,

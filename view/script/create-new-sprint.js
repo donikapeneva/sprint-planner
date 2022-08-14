@@ -3,12 +3,19 @@ const epicLink = document.getElementById('epicLink');
 const taskLink = document.getElementById('taskLink');
 const taskDescription = document.getElementById('taskDescription');
 const tasksList = document.querySelector('#tasksList');
+const error = document.getElementById('error-response');
+
+const sprintId = document.getElementById('sprint-id');
+const sprintPassword = document.getElementById('sprint-password');
+const createSprintBtn = document.getElementById('create-sprint-btn');
 
 function buildUniqueId(prefix = 'task') {
     return prefix + '-' + Math.floor(Math.random() * Date.now());
 }
 
 const state = {
+    sprintId: '',
+    sprintPassword: '',
     epicLink: '',
     taskLink: '',
     taskDescription: '',
@@ -16,10 +23,15 @@ const state = {
 };
 
 function init() {
-    epicLink.addEventListener('change', handleEpicLinkChange);
-    taskLink.addEventListener('change', handleTaskLinkChange);
-    taskDescription.addEventListener('change', handleTaskDescriptionChange);
-    addTaskBtn.addEventListener('click', handleTaskSubmit);
+    epicLink.addEventListener('change', (e) => handleFieldChange(e.target.value, 'epicLink'));
+    taskLink.addEventListener('change', (e) => handleFieldChange(e.target.value, 'taskLink'));
+    taskDescription.addEventListener('change', (e) => handleFieldChange(e.target.value, 'taskDescription'));
+    addTaskBtn.addEventListener('click', handleAddTask);
+
+    sprintId.addEventListener('keyup', (e) => handleFieldChange(e.target.value, 'sprintId'))
+    sprintPassword.addEventListener('keyup', (e) => handleFieldChange(e.target.value, 'sprintPassword'))
+    createSprintBtn.addEventListener('click', handleSubmitSprint);
+
     renderInput();
     renderTaskList();
 }
@@ -78,19 +90,11 @@ function buildDeleteButtonEl(id) {
     return button;
 }
 
-function handleEpicLinkChange(e) {
-    state.epicLink = e.target.value;
+function handleFieldChange(newValue, field) {
+    state[field] = newValue;
 }
 
-function handleTaskLinkChange(e) {
-    state.taskLink = e.target.value;
-}
-
-function handleTaskDescriptionChange(e) {
-    state.taskDescription = e.target.value;
-}
-
-function handleTaskSubmit(e) {
+function handleAddTask(e) {
     e.preventDefault();
     const newTask = {
         epicLink: state.epicLink,
@@ -111,5 +115,68 @@ function handleTaskDeleteButtonClick(id) {
     state.tasks = state.tasks.filter((t) => t.id !== id);
     renderTaskList();
 }
+
+function handleSubmitSprint(e) {
+    e.preventDefault();
+    
+    hideError();
+    
+    if (!isFormValid()) {  
+        showError('Fields cannot be empty');
+        return;
+    }
+
+    const data = { ...state };
+    console.log('>> data', data);
+    const ajaxReques = new XMLHttpRequest();
+    ajaxReques.open('POST', '../service/Sprints.php');
+    ajaxReques.send(JSON.stringify(data));
+
+    ajaxReques.onreadystatechange = () => {
+        console.log('>>>> ajaxReques', ajaxReques);
+        if (ajaxReques.readyState === 4 && ajaxReques.status == 200) {
+            const response = JSON.parse(ajaxReques.responseText);
+            // window.location.replace(response.data.redirectUrl);
+            
+        } else if (ajaxReques.readyState === 4 && (ajaxReques.status === 400 || ajaxReques.status === 404)) {
+            const response = JSON.parse(ajaxReques.responseText);
+            showError(response.error);
+        } else if (ajaxReques.readyState === 4  && (ajaxReques.status === 500)) {
+            showError('Service unavailable');
+        }
+    }
+}
+
+//todo move to shared
+const hideError = () => error.classList.add('hidden');
+
+const showError = (errorMessage) => { 
+    error.textContent = errorMessage;
+    error.classList.remove('hidden');
+}
+
+
+const isFormValid = () => {
+    let flag = true;
+    if (isEmpty(state.sprintId)) {
+        sprintId.classList.add('invalid');
+        flag = false;
+    }
+
+    if (isEmpty(state.sprintPassword)) {
+        sprintPassword.classList.add('invalid');
+        flag = false;
+    }
+
+    if (isEmptyList(state.tasks)) {
+        // roomPass.classList.add('invalid');
+        flag = false;
+    }
+    
+    return flag;
+}
+
+const isEmpty = value => value && value.trim() !== '' ? false : true;
+const isEmptyList = value => value && value.length > 0 ? false : true;
 
 document.addEventListener('DOMContentLoaded', init);
