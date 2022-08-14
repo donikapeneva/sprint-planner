@@ -16,7 +16,7 @@
     }
 
     public static function isUserLoggedInAsMaster(){
-        echo '>>> isset loggedi n > '.isset($_SESSION['loggedInAsMaster']);
+        // echo '>>> isset loggedi n > '.isset($_SESSION['loggedInAsMaster']);
         if(!isset($_SESSION['loggedInAsMaster']) || !$_SESSION['loggedInAsMaster']) {
             return false;
         }

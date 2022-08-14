@@ -28,10 +28,11 @@ function getAllSprints() {
             state.sprints = response.data;
             console.log('>> resp', response);
             renderTable();
-            
         } else if (ajaxReques.readyState === 4 && (ajaxReques.status === 400 || ajaxReques.status === 404)) {
             // const response = JSON.parse(ajaxReques.responseText);
             // showError(response.error);
+        } else if (ajaxReques.readyState === 4 && (ajaxReques.status === 401 || ajaxReques.status === 403)) {
+            window.location.replace('../login.php');
         } else if (ajaxReques.readyState === 4  && (ajaxReques.status === 500)) {
             // showError('Service unavailable');
         }

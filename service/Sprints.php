@@ -8,6 +8,11 @@
     $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
     SessionManager::start();
+
+    if (!SessionManager::isUserLoggedInAsMaster()) {
+        $response->returnResponse(401, '', 'Not authorized');
+    }
+
     $response = new Response();
     
     preg_match('/(?:Sprints.php)\/(?P<digit>\d+)/', $uri, $matches);
