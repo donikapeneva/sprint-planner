@@ -54,7 +54,9 @@ function buildTaskItemEl(id, epicLinkValue, taskLinkValue, taskDescriptionValue,
     const taskItem = document.createElement('div');
     taskItem.classList.add('task-row', 'row');
     // taskItem.publicId = id;
-    const approvedForPlanning = '';
+    const assignee = '';
+    const storypoints = '';
+    const includedInSprint = false;
     const devComments = 'predefined comment';
     const answer = '';
 
@@ -77,10 +79,11 @@ function buildTaskItemEl(id, epicLinkValue, taskLinkValue, taskDescriptionValue,
     button.addEventListener('click', onAddComment.bind(id));
     commentRow.appendChild(button);
 
-    taskItem.appendChild(createCheckboxNode(approvedForPlanning, 's1'));
-    taskItem.appendChild(buildButtonEl(epicLinkValue, 's1'));
+    taskItem.appendChild(buildCommentEl('asignee', assignee, 's1', () => {}, id));
+    taskItem.appendChild(createCheckboxNode(includedInSprint, 's1'));
+    taskItem.appendChild(buildCommentEl('storyPoints', storypoints, 's1', () => {}, id));
     taskItem.appendChild(buildButtonEl(taskLinkValue, 's1'));
-    taskItem.appendChild(createTaskColNode(taskDescriptionValue, 's3'));
+    taskItem.appendChild(createTaskColNode(taskDescriptionValue, 's2'));
 
 
     commentSection.appendChild(commentRow);

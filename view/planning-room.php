@@ -31,15 +31,18 @@
             <h4 id="sprint-room-id"></h4>
             <div class="form-width row tasks-header ">
                 <div class="col s1 bolder">
-                    Approved for Planning
+                    Assignee
                 </div>
                 <div class="col s1 bolder">
-                    Epic Link
+                    Included in Sprint
+                </div>
+                <div class="col s1 bolder">
+                    Story Points
                 </div>
                 <div class="col s1 bolder">
                     Task Link
                 </div>
-                <div class="col s3 bolder">
+                <div class="col s2 bolder">
                     Description
                 </div>
                 <div class="col s3 bolder">
