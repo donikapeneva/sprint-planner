@@ -74,39 +74,46 @@ const createSprintColNode = (text) => {
 const createSprintActions = (id, status) => {
     const actions = document.createElement('td');
     // let openRoomDUrl;
-    let callback;
+
+    const actionsAllowed = [];
+
     
-    switch (status) {
-        case 'NEW':
-            callback = initRoomForGrooming;
-            // openRoomDUrl = './grooming-room.php';
-            break;
-        case 'GROOMING': 
-            callback = openRoomForGrooming;
-            // openRoomDUrl = './grooming-room.php';
-            break;
-        case 'PLANNING':
-            callback = openRoomForPlanning;
-            // openRoomDUrl = './planning-room.php';
-            break;
-
-        case 'ACTIVE':
-        callback = closeSprint;
-            // openRoomDUrl = './planning-room.php';
-            break;
-        default:
-            openRoomDUrl = '';
-            break;
-    }
-
     const edit = buildButtonEl(id, 'Edit', actionButtonStyle.normal, () => { 
         window.location.href = './edit-sprint.php?sprintId=' + id;
     });
-    const action = buildButtonEl(id, 'Open Room', actionButtonStyle.accent, () => {
-        callback(id);
-    });
-    actions.appendChild(edit);
-    actions.appendChild(action);
+
+    switch (status) {
+        case 'NEW':
+            actionsAllowed.push(edit);
+            actionsAllowed.push(buildButtonEl(id, 'Open Room', actionButtonStyle.accent, () => {
+                initRoomForGrooming(id);
+            }));
+            break;
+        case 'GROOMING': 
+            actionsAllowed.push(edit);
+            actionsAllowed.push(buildButtonEl(id, 'Open Room', actionButtonStyle.accent, () => {
+                openRoomForGrooming(id);
+            }));
+            break;
+        case 'PLANNING':
+            // actionsAllowed.add(edit);
+            actionsAllowed.push(buildButtonEl(id, 'Open Room', actionButtonStyle.accent, () => {
+                openRoomForPlanning(id);
+            }));
+            break;
+
+        case 'ACTIVE':
+            // actionsAllowed.add(view);
+            actionsAllowed.push(buildButtonEl(id, 'Close Sprint', actionButtonStyle.accent, () => {
+                closeSprint(id);
+            }));
+            break;
+        default:
+            break;
+    }
+   
+    actionsAllowed.forEach(action => actions.appendChild(action));
+
     return actions;
 }
 
@@ -150,8 +157,9 @@ const closeSprint = (id) => {
     ajaxReques.send(JSON.stringify(data));
 
     ajaxReques.onreadystatechange = () => {
+        console.log(ajaxReques);
         if (ajaxReques.readyState === 4 && ajaxReques.status == 200) {
-            window.location.replace = `./sprints.php`;
+            window.location.reload();
             
         } else if (ajaxReques.readyState === 4 && (ajaxReques.status === 400 || ajaxReques.status === 404)) {
             const response = JSON.parse(ajaxReques.responseText);
