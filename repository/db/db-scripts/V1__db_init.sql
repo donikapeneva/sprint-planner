@@ -24,6 +24,7 @@ create table sprint_planner.`sprint` (
 
 create table sprint_planner.`task` (
 	`id` int not null auto_increment,
+    `public_id` varchar(100) not null,
     `epic_link` varchar(200),
     `task_link` varchar(200) not null,
     `short_description` varchar(500) not null,

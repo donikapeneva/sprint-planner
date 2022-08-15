@@ -6,7 +6,7 @@ const tasksList = document.querySelector('#tasksList');
 const error = document.getElementById('error-response');
 const success = document.getElementById('success-response');
 
-const sprintId = document.getElementById('sprint-id');
+const sprintRoomId = document.getElementById('sprint-id');
 const sprintPassword = document.getElementById('sprint-password');
 const createSprintBtn = document.getElementById('create-sprint-btn');
 
@@ -15,7 +15,7 @@ function buildUniqueId(prefix = 'task') {
 }
 
 const state = {
-    sprintId: '',
+    sprintRoomId: '',
     sprintPassword: '',
     epicLink: '',
     taskLink: '',
@@ -29,7 +29,7 @@ function init() {
     taskDescription.addEventListener('change', (e) => handleFieldChange(e.target.value, 'taskDescription'));
     addTaskBtn.addEventListener('click', handleAddTask);
 
-    sprintId.addEventListener('keyup', (e) => handleFieldChange(e.target.value, 'sprintId'))
+    sprintRoomId.addEventListener('keyup', (e) => handleFieldChange(e.target.value, 'sprintRoomId'))
     sprintPassword.addEventListener('keyup', (e) => handleFieldChange(e.target.value, 'sprintPassword'))
     createSprintBtn.addEventListener('click', handleSubmitSprint);
 
@@ -129,7 +129,7 @@ function handleSubmitSprint(e) {
 
     const data = { 
         tasks: state.tasks, 
-        sprintRoomId: state.sprintId, 
+        sprintRoomId: state.sprintRoomId, 
         sprintPassword: state.sprintPassword 
     };
     console.log('>> data', data);
@@ -141,10 +141,12 @@ function handleSubmitSprint(e) {
         console.log('>>>> ajaxReques', ajaxReques);
         if (ajaxReques.readyState === 4 && ajaxReques.status == 200) {
             const response = JSON.parse(ajaxReques.responseText);
-            response.data ? 
-                showSuccess(response.data) 
-                : showSuccess('Sprint created successfully');
-            setTimeout(hideSuccess, 5000);
+            state.sprintId = response.data.sprintId;
+            //  ? 
+            //     showSuccess(response.data) 
+            //     : showSuccess('Sprint created successfully');
+            // setTimeout(hideSuccess, 5000);
+            window.location.replace('./sprints.php');
             
         } else if (ajaxReques.readyState === 4 && (ajaxReques.status === 400 || ajaxReques.status === 404)) {
             const response = JSON.parse(ajaxReques.responseText);
@@ -173,8 +175,8 @@ const showError = (errorMessage) => {
 
 const isFormValid = () => {
     let flag = true;
-    if (isEmpty(state.sprintId)) {
-        sprintId.classList.add('invalid');
+    if (isEmpty(state.sprintRoomId)) {
+        sprintRoomId.classList.add('invalid');
         flag = false;
     }
 

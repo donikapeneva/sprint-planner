@@ -1,6 +1,7 @@
 <?php
 
     require_once "../repository/SprintRepository.php";
+    require_once "../repository/TaskRepository.php";
     require_once "./Response.php";
     require_once "./Session.php";
 
@@ -23,13 +24,23 @@
     
     switch ($requestMethod) {
         case 'GET': 
-            if (!empty($sprint_id)) {} 
+            if (!empty($sprint_id)) {
+                $sprint = getSprintInfoById($sprint_id);
+                $response->returnResponse(200, $sprint, '');
+            } 
             else {
                 $data = getAll();
                 $response->returnResponse(200, $data, '');
             }
             break;
         case 'POST': {
+            $json = file_get_contents('php://input');
+            $request = json_decode($json);
+
+            createNew($request);
+
+        }
+        case 'PUT': {
             $json = file_get_contents('php://input');
             $request = json_decode($json);
 
@@ -47,12 +58,45 @@
 
     function createNew($newSprint) {
         $response = new Response();
+        // todo public id - task
 
-        if (SprintRepository::getSprintByIdAndStatus($newSprint->sprintRoomId, Sprint::$statuses['new']) > 0) {
+        if (SprintRepository::getSprintByRoomIdAndStatus($newSprint->sprintRoomId, Sprint::$statuses['new']) > 0) {
             $response->returnResponse(200, 'Already created', '');
         }
 
-        SprintRepository::create($newSprint);
-        $response->returnResponse(200, '', '');
+        $sprint_id = SprintRepository::create($newSprint->sprintRoomId, $newSprint->sprintPassword );
+        
+        foreach ($newSprint->tasks as $task) {
+            TaskRepository::create($task, $sprint_id);
+        }
+        
+        $data = array( 'sprintId' => $sprint_id );
+        $response->returnResponse(200, $data, '');
+    }
+
+    function getSprintInfoById($sprintId) {
+        $sprintData = SprintRepository::getSprintById($sprintId);
+        $tasks = TaskRepository::getAllBySprintId($sprintId);
+        return array ('sprint' => $sprintData, 'tasks' => $tasks);
+    }
+
+    function update($newSprint) {
+        $response = new Response();
+        // todo public id - task
+
+        $tasks = $newSprint->tasks;
+
+        if (SprintRepository::getSprintByRoomIdAndStatus($newSprint->sprintRoomId, Sprint::$statuses['new']) > 0) {
+            $response->returnResponse(200, 'Already created', '');
+        }
+
+        $sprint_id = SprintRepository::create($newSprint->sprintRoomId, $newSprint->sprintPassword );
+        
+        foreach ($newSprint->tasks as $task) {
+            TaskRepository::create($task, $sprint_id);
+        }
+        
+        $data = array( 'sprintId' => $sprint_id );
+        $response->returnResponse(200, $data, '');
     }
 ?>

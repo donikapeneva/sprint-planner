@@ -87,7 +87,9 @@ const createSprintActions = (id, status) => {
             break;
     } 
 
-    const edit = buildButtonEl(id, 'Edit', actionButtonStyle.normal, () => {});
+    const edit = buildButtonEl(id, 'Edit', actionButtonStyle.normal, () => { 
+        window.location.href = './edit-sprint.php?sprintId=' + id;
+    });
     const action = buildButtonEl(id, 'Open Room', actionButtonStyle.accent, () => {});
     actions.appendChild(edit);
     actions.appendChild(action);

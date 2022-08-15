@@ -4,6 +4,7 @@ class Sprint {
 
     public $id;
     public $roomId;
+    public $roomPassword;
     public $status;
 
     public static $statuses = array(
