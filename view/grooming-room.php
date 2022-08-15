@@ -14,33 +14,31 @@
         <div class="flex-container-center flex-center-width">
             <h1>Grooming</h1>
             <h4 id="sprint-room-id"></h4>
-            <div class="form-width row flex-header ">
-                <div class="col s1">
+            <div class="form-width row tasks-header ">
+                <div class="col s1 bolder">
                     Approved for Planning
                 </div>
-                <div class="col s1">
+                <div class="col s1 bolder">
                     Epic Link
                 </div>
-                <div class="col s1">
+                <div class="col s1 bolder">
                     Task Link
                 </div>
-                <div class="col s2">
+                <div class="col s3 bolder">
                     Description
                 </div>
-                <div class="col s2">
-                    Dev Comments
+                <div class="col s3 bolder">
+                    Comments
                 </div>
-                <div class="col s2">
+                <!-- <div class="col s2 bolder">
                     Bizz Comments
-                </div>
-                <div class="col s2">
+                </div> -->
+                <div class="col s3 bolder">
                     Answer
                 </div>
             </div>
 
             <div id="tasksList" class="form-width row flex-row"></div>
-
-            
 
         </div>
         

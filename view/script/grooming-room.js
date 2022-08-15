@@ -21,7 +21,7 @@ function init() {
     
     getSprint();
 
-    sprintRoomId.addEventListener('keyup', (e) => handleFieldChange(e.target.value, 'sprintRoomId'))
+    // sprintRoomId.addEventListener('keyup', (e) => handleFieldChange(e.target.value, 'sprintRoomId'))
     endGrooming.addEventListener('click', handleSaveSprint);
 
 }
@@ -33,6 +33,7 @@ function renderTaskList() {
         console.log('>> task', task);
         const item = buildTaskItemEl(task.publicId, task.epicLink, task.taskLink, task.taskDescription,
                                     task.comments);
+        item.addEventListener('keyup', e => updateField(e.target.value));
         frag.appendChild(item);
     });
 
@@ -48,25 +49,43 @@ function renderSprintDetails() {
 }
 
 
-function buildTaskItemEl(id, epicLinkValue, taskLinkValue, taskDescriptionValue) {
+function buildTaskItemEl(id, epicLinkValue, taskLinkValue, taskDescriptionValue, comments) {
+    console.log('>>> buildTaskItemEl', id);
     const taskItem = document.createElement('div');
     taskItem.classList.add('task-row', 'row');
-    taskItem.publicId = id;
+    // taskItem.publicId = id;
     const approvedForPlanning = '';
-    const devComments = '';
-    const bizzComments = '';
+    const devComments = 'predefined comment';
     const answer = '';
-    // comments.foreach(comment => {
 
+    const commentSection = buildContainer('s6');
+
+    // comments.foreach(comment => {
+    //     const tag = comment.type === 'DEV' ? 'DEV' : 'BUSINESS';
+
+    //     const row = buildContainer('s12');
+    //     row.appendChild(buildCommentEl(tag, comment.content, 's4'));
+    //     row.appendChild(buildCommentEl('answer', answer, 's4'));
+    //     commentSection.appendChild(row);
     // });
+
+    //comments
+    const commentRow = buildContainer('s12');
+    commentRow.appendChild(buildCommentEl('tag', devComments, 's7', onAddComment, id));
+    commentRow.appendChild(buildCommentEl('answer', answer, 's5', onAddAnswer, id));
+    const button = createButton('Add');
+    button.addEventListener('click', onAddComment.bind(id));
+    commentRow.appendChild(button);
 
     taskItem.appendChild(createCheckboxNode(approvedForPlanning, 's1'));
     taskItem.appendChild(buildButtonEl(epicLinkValue, 's1'));
     taskItem.appendChild(buildButtonEl(taskLinkValue, 's1'));
-    taskItem.appendChild(createTaskColNode(taskDescriptionValue, 's2'));
-    taskItem.appendChild(createTaskColNode(devComments, 's2'));
-    taskItem.appendChild(createTaskColNode(bizzComments, 's2'));
-    taskItem.appendChild(createTaskColNode(answer, 's2'));
+    taskItem.appendChild(createTaskColNode(taskDescriptionValue, 's3'));
+
+
+    commentSection.appendChild(commentRow);
+    taskItem.appendChild(commentSection);
+    
     
     return taskItem;
 }
@@ -82,6 +101,7 @@ const createTaskColNode = (text, gridColSize) => {
 
 const createCheckboxNode = (isChecked, gridColSize) => {
     //todo add on click 
+    
     const div = document.createElement('div');
     const checkbox = document.createElement('input');
     checkbox.classList.add('filled-in');
@@ -100,56 +120,64 @@ const createCheckboxNode = (isChecked, gridColSize) => {
 function buildButtonEl(link, gridColSize) {
     
     const div = document.createElement('div');
-    const button = document.createElement('a');
     const text = link ? link.substring(link.length - 5) : '';
+    const button = createButton(text);
     button.textContent = text;
     button.href = link;
     button.target = '_blank'
-    button.className = 'waves-effect waves-teal btn-flat secondary-color centered';
-    
+  
     div.className = `col ${gridColSize}`;
     
     div.appendChild(button);
     return div;
 }
 
-
-function buildDeleteButtonEl(id) {
+function createButton (text) {
     const button = document.createElement('a');
-    const textContent = document.createTextNode('Remove');
-
+    button.textContent = text;
     button.className = 'waves-effect waves-teal btn-flat secondary-color centered';
-    button.addEventListener('click', handleTaskDeleteButtonClick.bind(null, id));
-    button.appendChild(textContent);
+    
 
     return button;
 }
 
-function handleFieldChange(newValue, field) {
-    state[field] = newValue;
+
+function buildContainer (gridColSize) {
+    const div = document.createElement('div');
+    div.className = `col ${gridColSize}`;
+    return div;
 }
 
-function handleAddTask(e) {
-    e.preventDefault();
-    const newTask = {
-        epicLink: state.epicLink,
-        taskLink: state.taskLink,
-        taskDescription: state.taskDescription,
-        publicId: buildUniqueId('task')
+function buildCommentEl(tag, text, gridColSize, onClick, id) {
+    
+    const div = document.createElement('div');
 
-    }
-    state.tasks = [...state.tasks, newTask];
-    state.epicLink = '';
-    state.taskLink = '';
-    state.taskDescription = '';
-    renderInput();
-    renderTaskList();
+    const textarea = document.createElement('textarea');
+    textarea.className = 'comment';
+    textarea.textContent = text;
+
+    textarea.addEventListener('input', () => autoExpand(textarea));
+
+    // const button = createButton('Add');
+    // button.addEventListener('click', onAddComment.bind(id));
+
+    div.className = `col ${gridColSize}`;
+    div.appendChild(textarea);
+    // div.appendChild(button);
+    return div;
 }
 
-function handleTaskDeleteButtonClick(id) {
-    state.tasks = state.tasks.filter((t) => t.publicId !== id);
-    renderTaskList();
-}
+const autoExpand = (field) => {
+	// Reset field height
+	field.style.height = 'inherit';
+
+	// Get the computed styles for the element
+    const computed = window.getComputedStyle(field);
+    // Calculate the height
+    const height = field.scrollHeight + parseInt(computed.getPropertyValue('border-top-width'), 10) * 3;
+    field.style.height = height + 'px';
+
+};
 
 function getSprint() {
     const ajaxReques = new XMLHttpRequest();
@@ -178,38 +206,29 @@ function getSprint() {
     }
 }
 
-function handleSaveSprint(e) {
+function onAddAnswer(e ) { };
+
+function onAddComment(e, id ) {
+    console.log('>>> onAddComment e ', e, id);
+
+}
+
+function handleEndGrooming(e) {
     e.preventDefault();
     
-    hideError();
-    
-    if (!isFormValid()) {  
-        showError('Fields cannot be empty');
-        return;
-    }
-
     const data = {
         sprintId: state.sprintId,
-        tasks: state.tasks, 
-        sprintRoomId: state.sprintRoomId, 
-        sprintPassword: state.sprintPassword 
+        action: 'end-grooming'
     };
-    console.log('>> data', data);
+    
     const ajaxReques = new XMLHttpRequest();
-    ajaxReques.open('PUT', '../service/Sprints.php');
+    ajaxReques.open('POST', '../service/Sprints.php/' + state.sprintId);
     ajaxReques.send(JSON.stringify(data));
 
     ajaxReques.onreadystatechange = () => {
         console.log('>>>> ajaxReques', ajaxReques);
         if (ajaxReques.readyState === 4 && ajaxReques.status == 200) {
-            const response = JSON.parse(ajaxReques.responseText);
-            // state.sprintId = response.data.sprintId;
-            //  ? 
-            //     showSuccess(response.data) 
-            //     : showSuccess('Sprint created successfully');
-            // setTimeout(hideSuccess, 5000);
-            window.location.replace('./edit-sprint.php?sprintId=' + state.sprintId);
-            
+            window.location.replace('./sprints');
         } else if (ajaxReques.readyState === 4 && (ajaxReques.status === 400 || ajaxReques.status === 404)) {
             const response = JSON.parse(ajaxReques.responseText);
             showError(response.error);
@@ -233,26 +252,19 @@ const showError = (errorMessage) => {
     error.classList.remove('hidden');
 }
 
+function debounce(func, timeout = 1000){
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => { func.apply(this, args); }, timeout);
+    };
+}
 
-// const isFormValid = () => {
-//     let flag = true;
-//     if (isEmpty(state.sprintRoomId)) {
-//         sprintRoomId.classList.add('invalid');
-//         flag = false;
-//     }
-
-//     if (isEmpty(state.sprintPassword)) {
-//         sprintPassword.classList.add('invalid');
-//         flag = false;
-//     }
-
-//     if (isEmptyList(state.tasks)) {
-//         // roomPass.classList.add('invalid');
-//         flag = false;
-//     }
-    
-//     return flag;
-// }
+function saveInput(){
+    console.log('Saving data');
+}
+  
+const updateField = debounce(() => saveInput());
 
 const isEmpty = value => value && value.trim() !== '' ? false : true;
 const isEmptyList = value => value && value.length > 0 ? false : true;
