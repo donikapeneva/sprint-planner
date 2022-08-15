@@ -59,29 +59,16 @@ class SprintRepository {
         return $connection->lastInsertId();
     }
 
-    public static function update($sprintId, $updatedSprint) {
-        // $room_id = $updatedSprint->sprintId;
-        // $room_pass = $updatedSprint->sprintPassword;
-
-        // $tasks = $updatedSprint->tasks;
-
-        // $connection = Database::getInstance()->getConnection();
+    public static function updateSprintRoom($sprintId, $newRoomId, $newRoomPass) {
+        $connection = Database::getInstance()->getConnection();
         
-        // $newSprint_sql = 'INSERT INTO sprint (room_id, room_pass, status)
-        //                     VALUES ( ?, ?, ?)';
+        $sql = 'UPDATE sprint
+                            SET room_id = ?, room_pass = ?
+                            WHERE id = ?';
 
-        // $query = $connection->prepare($newSprint_sql);
-        // $query->execute([$room_id, $room_pass, Sprint::$statuses['new']]);
+        $query = $connection->prepare($sql);
+        $query->execute([$newRoomId, $newRoomPass, $sprintId]);
 
-        // $sprint_id = $connection->lastInsertId();
-
-        // foreach ($tasks as $task) {
-        //     $sql = 'UPDATE task (epic_link, task_link, short_description, sprint_id) 
-        //             SET (?, ?, ?, ?)
-        //             WHERE sprint_id = :sprintId';
-        //     $query = $connection->prepare($sql);
-        //     $query->execute([$task->epicLink, $task->taskLink, $task->taskDescription, $sprintId]);
-        // }
     }
 }
 

@@ -8,13 +8,14 @@ const success = document.getElementById('success-response');
 
 const sprintRoomId = document.getElementById('sprint-id');
 const sprintPassword = document.getElementById('sprint-password');
-const createSprintBtn = document.getElementById('create-sprint-btn');
+const createSprintBtn = document.getElementById('save-sprint-btn');
 
 function buildUniqueId(prefix = 'task') {
     return prefix + '-' + Math.floor(Math.random() * Date.now());
 }
 
 const state = {
+    sprintId: '',
     sprintRoomId: '',
     sprintPassword: '',
     epicLink: '',
@@ -24,6 +25,11 @@ const state = {
 };
 
 function init() {
+    const urlParams = new URLSearchParams(window.location.search);
+    state.sprintId = urlParams.get('sprintId');
+    
+    getSprint();
+
     epicLink.addEventListener('change', (e) => handleFieldChange(e.target.value, 'epicLink'));
     taskLink.addEventListener('change', (e) => handleFieldChange(e.target.value, 'taskLink'));
     taskDescription.addEventListener('change', (e) => handleFieldChange(e.target.value, 'taskDescription'));
@@ -31,13 +37,12 @@ function init() {
 
     sprintRoomId.addEventListener('keyup', (e) => handleFieldChange(e.target.value, 'sprintRoomId'))
     sprintPassword.addEventListener('keyup', (e) => handleFieldChange(e.target.value, 'sprintPassword'))
-    createSprintBtn.addEventListener('click', handleSubmitSprint);
+    createSprintBtn.addEventListener('click', handleSaveSprint);
 
-    renderInput();
-    renderTaskList();
 }
 
 function renderInput() {
+    console.log('>>> state', state);
     epicLink.value = state.epicLink;
     taskLink.value = state.taskLink;
     taskDescription.value = state.taskDescription;
@@ -47,7 +52,8 @@ function renderTaskList() {
     const frag = document.createDocumentFragment();
 
     state.tasks.forEach((task) => {
-        const item = buildTaskItemEl(task.id, task.epicLink, task.taskLink, task.taskDescription);
+        console.log('>> task', task);
+        const item = buildTaskItemEl(task.publicId, task.epicLink, task.taskLink, task.taskDescription);
         frag.appendChild(item);
     });
 
@@ -57,6 +63,14 @@ function renderTaskList() {
     tasksList.appendChild(frag);
 
 }
+
+
+
+function renderSprintDetails() {
+    sprintPassword.value = state.sprintPassword;
+    sprintRoomId.value = state.sprintRoomId;
+}
+
 
 function buildTaskItemEl(id, epicLinkValue, taskLinkValue, taskDescriptionValue) {
     const taskItem = document.createElement('li');
@@ -117,7 +131,36 @@ function handleTaskDeleteButtonClick(id) {
     renderTaskList();
 }
 
-function handleSubmitSprint(e) {
+function getSprint() {
+    
+    const ajaxReques = new XMLHttpRequest();
+    ajaxReques.open('GET', '../service/Sprints.php/'+state.sprintId);
+    ajaxReques.send();
+
+    ajaxReques.onreadystatechange = () => {
+        console.log('>>>> ajaxReques', ajaxReques);
+        if (ajaxReques.readyState === 4 && ajaxReques.status == 200) {
+            const response = JSON.parse(ajaxReques.responseText);
+            //todo
+            console.log('>>> resp', response);
+            state.sprintRoomId = response.data.sprint.roomId;
+            state.sprintPassword = response.data.sprint.roomPassword;
+            state.tasks = response.data.tasks;
+            
+            renderInput();
+            renderTaskList();
+            renderSprintDetails();
+            
+        } else if (ajaxReques.readyState === 4 && (ajaxReques.status === 400 || ajaxReques.status === 404)) {
+            const response = JSON.parse(ajaxReques.responseText);
+            showError(response.error);
+        } else if (ajaxReques.readyState === 4  && (ajaxReques.status === 500)) {
+            showError('Service unavailable');
+        }
+    }
+}
+
+function handleSaveSprint(e) {
     e.preventDefault();
     
     hideError();
@@ -127,26 +170,27 @@ function handleSubmitSprint(e) {
         return;
     }
 
-    const data = { 
+    const data = {
+        sprintId: state.sprintId,
         tasks: state.tasks, 
         sprintRoomId: state.sprintRoomId, 
         sprintPassword: state.sprintPassword 
     };
     console.log('>> data', data);
     const ajaxReques = new XMLHttpRequest();
-    ajaxReques.open('POST', '../service/Sprints.php');
+    ajaxReques.open('PUT', '../service/Sprints.php');
     ajaxReques.send(JSON.stringify(data));
 
     ajaxReques.onreadystatechange = () => {
         console.log('>>>> ajaxReques', ajaxReques);
         if (ajaxReques.readyState === 4 && ajaxReques.status == 200) {
             const response = JSON.parse(ajaxReques.responseText);
-            state.sprintId = response.data.sprintId;
+            // state.sprintId = response.data.sprintId;
             //  ? 
             //     showSuccess(response.data) 
             //     : showSuccess('Sprint created successfully');
             // setTimeout(hideSuccess, 5000);
-            window.location.replace('./sprints.php');
+            window.location.replace('./edit-sprint.php?sprintId=' + state.sprintId);
             
         } else if (ajaxReques.readyState === 4 && (ajaxReques.status === 400 || ajaxReques.status === 404)) {
             const response = JSON.parse(ajaxReques.responseText);

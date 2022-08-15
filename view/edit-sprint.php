@@ -60,7 +60,7 @@
                 <ul id="tasksList" class="form-width row "></ul>
 
                 <div class="center form-button">
-                    <input id="create-sprint-btn" type="submit" value="Create Sprint" name="submit" class="btn"/>
+                    <input id="save-sprint-btn" type="submit" value="Save Sprint" name="submit" class="btn"/>
                 </div>
 
             </form>

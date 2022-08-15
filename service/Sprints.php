@@ -44,7 +44,7 @@
             $json = file_get_contents('php://input');
             $request = json_decode($json);
 
-            createNew($request);
+            update($request);
 
         }
         default: 
@@ -80,19 +80,31 @@
         return array ('sprint' => $sprintData, 'tasks' => $tasks);
     }
 
-    function update($newSprint) {
+    function update($request) {
         $response = new Response();
-        // todo public id - task
-
-        $tasks = $newSprint->tasks;
-
-        if (SprintRepository::getSprintByRoomIdAndStatus($newSprint->sprintRoomId, Sprint::$statuses['new']) > 0) {
-            $response->returnResponse(200, 'Already created', '');
+        
+        $sprint_id = $request->sprintId;
+        $sprint = SprintRepository::getSprintById($sprint_id);
+        $updatedSprint = new Sprint();
+        $updatedSprint->roomId = $sprint->roomId;
+        $updatedSprint->roomPassword = $sprint->roomPassword;
+        
+        if ($sprint->roomId !== $request->sprintRoomId) {
+            if (SprintRepository::getSprintByRoomIdAndStatus($request->sprintRoomId, Sprint::$statuses['new']) > 0) {
+                $response->returnResponse(400, '', 'Sprint with room id '.$request->sprintRoomId.' already exists');
+            }
+            $updatedSprint->roomId = $request->sprintRoomId;
         }
 
-        $sprint_id = SprintRepository::create($newSprint->sprintRoomId, $newSprint->sprintPassword );
+        if ($sprint->roomPassword !== $request->sprintPassword) {
+            $updatedSprint->roomPassword = $request->sprintPassword;
+        }
+
+        SprintRepository::updateSprintRoom($sprint_id, $updatedSprint->roomId, $updatedSprint->roomPassword);
         
-        foreach ($newSprint->tasks as $task) {
+        TaskRepository::deleteAllBySprintId($sprint_id);
+
+        foreach ($request->tasks as $task) {
             TaskRepository::create($task, $sprint_id);
         }
         

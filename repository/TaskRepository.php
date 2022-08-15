@@ -25,7 +25,16 @@ class TaskRepository {
         $sql = 'INSERT INTO task (public_id, epic_link, task_link, short_description, sprint_id) 
                 VALUES (?, ?, ?, ?, ?)';
         $query = $connection->prepare($sql);
-        $query->execute([$task->id, $task->epicLink, $task->taskLink, $task->taskDescription, $sprint_id]);
+        $query->execute([$task->publicId, $task->epicLink, $task->taskLink, $task->taskDescription, $sprint_id]);
+    }
+
+    public static function deleteAllBySprintId($sprint_id) {
+        $connection = Database::getInstance()->getConnection();
+
+        $sql = 'DELETE FROM task  
+                WHERE sprint_id = ?';
+        $query = $connection->prepare($sql);
+        $query->execute([$sprint_id]);
     }
 
     public static function update($publicId, $updatedTask) {
