@@ -1,0 +1,25 @@
+.form-width {
+    width: 90%;
+}
+
+.flex-header {
+    /* display: flex;
+    align-items: center; */
+}
+
+.task-row {
+    overflow-wrap: anywhere;
+}
+
+.flex-row {
+    overflow-wrap: anywhere;
+    /* display: flex;
+    width: 90%; */
+}
+
+footer { 
+    top: 100vh;
+    height: 65px;
+    position: sticky;
+    bottom: 0;
+}

@@ -26,7 +26,7 @@ function getAllSprints() {
             console.log(ajaxReques);
             const response = JSON.parse(ajaxReques.responseText);
             state.sprints = response.data;
-            console.log('>> resp', response);
+            console.log('>> sprints', response.data);
             renderTable();
         } else if (ajaxReques.readyState === 4 && (ajaxReques.status === 400 || ajaxReques.status === 404)) {
             // const response = JSON.parse(ajaxReques.responseText);
@@ -74,23 +74,26 @@ const createSprintColNode = (text) => {
 const createSprintActions = (id, status) => {
     const actions = document.createElement('td');
     let openRoomDUrl;
+    
     switch (status) {
-        case status === 'NEW':
-        case status === 'GROOMING': 
-            openRoomDUrl = '/grooming-room.php';
+        case 'NEW':
+        case 'GROOMING': 
+            openRoomDUrl = './grooming-room.php';
             break;
-        case status === 'PLANNING':
-            openRoomDUrl = '/planning-room.php';
+        case 'PLANNING':
+            openRoomDUrl = './planning-room.php';
             break;
         default:
             openRoomDUrl = '';
             break;
-    } 
+    }
 
     const edit = buildButtonEl(id, 'Edit', actionButtonStyle.normal, () => { 
         window.location.href = './edit-sprint.php?sprintId=' + id;
     });
-    const action = buildButtonEl(id, 'Open Room', actionButtonStyle.accent, () => {});
+    const action = buildButtonEl(id, 'Open Room', actionButtonStyle.accent, () => {
+        window.location.href = `./${openRoomDUrl}?sprintId=${id}`;
+    });
     actions.appendChild(edit);
     actions.appendChild(action);
     return actions;
