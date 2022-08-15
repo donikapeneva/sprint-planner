@@ -13,7 +13,7 @@ class SprintRepository {
             ->prepare($sql);
         $query->execute([$roomId, $pass]);
 
-        return $query->fetch();
+        return $query->fetchObject('Sprint');
     }
 
     public static function getSprintByRoomIdAndStatus($roomId, $status) {

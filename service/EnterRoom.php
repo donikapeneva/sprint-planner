@@ -2,6 +2,7 @@
 
     require_once "../repository/UserRepository.php";
     require_once "../repository/SprintRepository.php";
+    require_once "../repository/pojo/Sprint.php";
     require_once "./Response.php";
     
     $json = file_get_contents('php://input');
@@ -16,8 +17,12 @@
         $response->returnResponse(404, '', 'User not found');
     }
 
-    if (!roomExists($request->roomId, $request->roomPass)) {
+    if (!$room = roomExists($request->roomId, $request->roomPass)) {
         $response->returnResponse(404, '', 'Incorrect room credentials');
+    }
+
+    if (!isRoomOpen($room)) {
+        $response->returnResponse(404, '', 'Room is not open');
     }
 
     $data = array ('redirectUrl' => './view/grooming-room.php');
@@ -29,7 +34,12 @@
     }
 
     function roomExists($roomSprintId, $roomPassword) {
-        return SprintRepository::getSprintByIdAndPassword($roomSprintId, $roomPassword) > 0;
+        return SprintRepository::getSprintByRoomIdAndPassword($roomSprintId, $roomPassword);
     }
+
+    function isRoomOpen($room) {
+        return $room->status === Sprint::$statuses['grooming'] || $room->status === Sprint::$statuses['planning'];
+    }
+    
 
 ?>
