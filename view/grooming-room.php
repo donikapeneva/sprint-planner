@@ -9,9 +9,16 @@
     </head>
     <body>
         <?php
+            include('../service/Session.php');
+            SessionManager::start();
+            if(!SessionManager::isUserLoggedIn()) {
+                header('Location: ../');
+            }
+        ?>
+        <?php
             include('./header.php');
         ?>
-        
+
         <div class="flex-container-center">
             <div id="error-response" class="card #fbe9e7 deep-orange lighten-5 response-message hidden"></div>
         </div>
@@ -59,7 +66,7 @@
 
         </footer>
            
-            
+        <script src="./script/shared.js"></script>
         <script src="./script/grooming-room.js"></script>
     </body>
 

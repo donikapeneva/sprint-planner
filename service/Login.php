@@ -20,8 +20,10 @@
     }
 
     SessionManager::start();
-    $_SESSION['email'] = $user->getEmail();
-    $_SESSION['loggedInAsMaster'] = true;
+    SessionManager::setUserMail($user->getEmail());
+    SessionManager::setLoggedInAsMaster();
+    // $_SESSION['email'] = $user->getEmail();
+    // $_SESSION['loggedInAsMaster'] = true;
 
     $data = array ('redirectUrl' => './sprints.php');
     $response->returnResponse(200, $data, '');

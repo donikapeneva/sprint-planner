@@ -4,6 +4,7 @@
     require_once "../repository/SprintRepository.php";
     require_once "../repository/pojo/Sprint.php";
     require_once "./Response.php";
+    require_once "./Session.php";
     
     $json = file_get_contents('php://input');
     $request = json_decode($json);
@@ -25,7 +26,9 @@
         $response->returnResponse(404, '', 'Room is not open');
     }
 
-    $data = array ('redirectUrl' => './view/grooming-room.php');
+    SessionManager::start();
+    SessionManager::setUserMail($request->email);
+    $data = array ('sprintId' => $room->id, 'redirectUrl' => './view/grooming-room.php');
     $response->returnResponse(200, $data, '');
 
 

@@ -11,8 +11,12 @@
         session_destroy();
     }
 
-    public static function getUserMail(){
-        echo '>>>emial'.$_SESSION['email'];
+    public static function setUserMail($email){
+        $_SESSION['email'] = $email;
+    }
+
+    public static function isUserLoggedIn(){
+        return (isset($_SESSION['email']) && $_SESSION['email']);
     }
 
     public static function isUserLoggedInAsMaster(){

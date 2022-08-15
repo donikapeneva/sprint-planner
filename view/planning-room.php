@@ -9,6 +9,13 @@
     </head>
     <body>
         <?php
+            include('../service/Session.php');
+            SessionManager::start();
+            if(!SessionManager::isUserLoggedIn()) {
+                header('Location: ../');
+            }
+        ?>
+        <?php
             include('./header.php');
         ?>
         
@@ -59,7 +66,7 @@
 
         </footer>
            
-            
+        <script src="./script/shared.js"></script>
         <script src="./script/planning-room.js"></script>
     </body>
 

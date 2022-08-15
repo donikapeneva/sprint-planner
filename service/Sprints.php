@@ -10,9 +10,7 @@
 
     SessionManager::start();
 
-    if (!SessionManager::isUserLoggedInAsMaster()) {
-        $response->returnResponse(401, '', 'Not authorized');
-    }
+    
 
     $response = new Response();
     
@@ -34,6 +32,10 @@
             }
             break;
         case 'POST': {
+            if (!SessionManager::isUserLoggedInAsMaster()) {
+                $response->returnResponse(401, '', 'Not authorized');
+            }
+
             $json = file_get_contents('php://input');
             $request = json_decode($json);
 
@@ -45,6 +47,10 @@
             break;
         }
         case 'PUT': {
+            if (!SessionManager::isUserLoggedIn()) {
+                $response->returnResponse(401, '', 'Not authorized');
+            }
+
             $json = file_get_contents('php://input');
             $request = json_decode($json);
 

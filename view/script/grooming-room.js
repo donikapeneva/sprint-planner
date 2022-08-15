@@ -228,7 +228,9 @@ function handleEndGrooming(e) {
         console.log('>>>> ajaxReques', ajaxReques);
         if (ajaxReques.readyState === 4 && ajaxReques.status == 200) {
             window.location.replace('./sprints.php');
-        } else if (ajaxReques.readyState === 4 && (ajaxReques.status === 400 || ajaxReques.status === 404)) {
+        } else if (ajaxReques.readyState === 4 
+            && (ajaxReques.status === 400 || ajaxReques.status === 404
+                || ajaxReques.status === 401)) {
             const response = JSON.parse(ajaxReques.responseText);
             showError(response.error);
         } else if (ajaxReques.readyState === 4  && (ajaxReques.status === 500)) {
