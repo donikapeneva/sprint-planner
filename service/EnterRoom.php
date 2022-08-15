@@ -28,7 +28,12 @@
 
     SessionManager::start();
     SessionManager::setUserMail($request->email);
-    $data = array ('sprintId' => $room->id, 'redirectUrl' => './view/grooming-room.php');
+    
+    
+    $redirectTo = $room->status === Sprint::$statuses['grooming'] 
+                    ? './view/grooming-room.php' : './view/planning-room.php';
+
+    $data = array ('sprintId' => $room->id, 'redirectUrl' => $redirectTo);
     $response->returnResponse(200, $data, '');
 
 
