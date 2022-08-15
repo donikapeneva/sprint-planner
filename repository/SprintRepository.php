@@ -37,8 +37,9 @@ class SprintRepository {
     }
 
     public static function getAll() {
-        $sql = 'SELECT id, room_id as roomId, status FROM sprint 
-                ';
+        $sql = 'SELECT id, room_id as roomId, status 
+                FROM sprint 
+                ORDER BY id desc';
         $query = Database::getInstance()->getConnection()->prepare($sql);
 
         $query->execute();
