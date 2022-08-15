@@ -22,7 +22,7 @@ function init() {
     getSprint();
 
     // sprintRoomId.addEventListener('keyup', (e) => handleFieldChange(e.target.value, 'sprintRoomId'))
-    endGrooming.addEventListener('click', handleSaveSprint);
+    endGrooming.addEventListener('click', handleEndGrooming);
 
 }
 
@@ -181,8 +181,9 @@ const autoExpand = (field) => {
 
 function getSprint() {
     const ajaxReques = new XMLHttpRequest();
-    ajaxReques.open('GET', '../service/Sprints.php/'+state.sprintId);
-    ajaxReques.send();
+    const data = {sprintId: state.sprintId, action: 'open-grooming'};
+    ajaxReques.open('POST', '../service/Sprints.php');
+    ajaxReques.send(JSON.stringify(data));
 
     ajaxReques.onreadystatechange = () => {
         console.log('>>>> ajaxReques', ajaxReques);
@@ -210,7 +211,6 @@ function onAddAnswer(e ) { };
 
 function onAddComment(e, id ) {
     console.log('>>> onAddComment e ', e, id);
-
 }
 
 function handleEndGrooming(e) {
@@ -228,7 +228,7 @@ function handleEndGrooming(e) {
     ajaxReques.onreadystatechange = () => {
         console.log('>>>> ajaxReques', ajaxReques);
         if (ajaxReques.readyState === 4 && ajaxReques.status == 200) {
-            window.location.replace('./sprints');
+            window.location.replace('./sprints.php');
         } else if (ajaxReques.readyState === 4 && (ajaxReques.status === 400 || ajaxReques.status === 404)) {
             const response = JSON.parse(ajaxReques.responseText);
             showError(response.error);

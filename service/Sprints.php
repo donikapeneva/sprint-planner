@@ -37,15 +37,19 @@
             $json = file_get_contents('php://input');
             $request = json_decode($json);
 
-            createNew($request);
-
+            if (!empty($request->sprintId) && !empty($request->action)) {
+                proceedNextSprintStep($request->sprintId, $request->action);
+            } else {
+                createNew($request);
+            }
+            break;
         }
         case 'PUT': {
             $json = file_get_contents('php://input');
             $request = json_decode($json);
 
             update($request);
-
+            break;
         }
         default: 
             $response->returnResponse(404, '', 'Not Found');
@@ -110,5 +114,56 @@
         
         $data = array( 'sprintId' => $sprint_id );
         $response->returnResponse(200, $data, '');
+    }
+
+    function proceedNextSprintStep($sprint_id, $action) {
+        $response = new Response();
+        
+        if(!SessionManager::isUserLoggedInAsMaster()) {
+            $response->returnResponse(401, '', 'You are not authorized to do this action');
+        }
+
+        $sprint = SprintRepository::getSprintById($sprint_id);
+        if (!$sprint) {
+            $response->returnResponse(400, '', 'Something went wrong');
+        }
+            
+        switch($sprint->status) {
+            case Sprint::$statuses['new']:
+                if ($action === 'open-grooming') {
+                    SprintRepository::updateSprintStatus($sprint_id, Sprint::$statuses['grooming']);
+                    $sprint = getSprintInfoById($sprint_id);
+                    $response->returnResponse(200, $sprint, '');
+                } else {
+                    $response->returnResponse(400, '', 'Invalid action');
+                }
+                break;
+
+            case Sprint::$statuses['grooming'] :
+                if ($action === 'end-grooming') {
+                    SprintRepository::updateSprintStatus($sprint_id, Sprint::$statuses['planning']);
+                    $response->returnResponse(200, '', '');
+                } else if ($action === 'open-grooming') {
+                    $sprint = getSprintInfoById($sprint_id);
+                    $response->returnResponse(200, $sprint, '');
+                } else {
+                    $response->returnResponse(400, '', 'Invalid action');
+                }
+                break;
+
+            case Sprint::$statuses['planning'] :
+                SprintRepository::updateSprintStatus($sprint_id, Sprint::$statuses['active']);
+                $response->returnResponse(200, '', '');
+                break;
+
+            case Sprint::$statuses['active'] :
+                SprintRepository::updateSprintStatus($sprint_id, Sprint::$statuses['closed']);
+                $response->returnResponse(200, '', '');
+                break;
+                
+            default:
+                $response->returnResponse(400, '', '');
+        }
+        
     }
 ?>

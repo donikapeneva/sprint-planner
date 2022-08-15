@@ -70,6 +70,18 @@ class SprintRepository {
         $query->execute([$newRoomId, $newRoomPass, $sprintId]);
 
     }
+
+    public static function updateSprintStatus($sprintId, $newStatus) {
+        $connection = Database::getInstance()->getConnection();
+        
+        $sql = 'UPDATE sprint
+                            SET status = ?
+                            WHERE id = ?';
+
+        $query = $connection->prepare($sql);
+        $query->execute([$newStatus, $sprintId]);
+
+    }
 }
 
 ?>
