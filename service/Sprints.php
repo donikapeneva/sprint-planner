@@ -143,9 +143,6 @@
                 if ($action === 'end-grooming') {
                     SprintRepository::updateSprintStatus($sprint_id, Sprint::$statuses['planning']);
                     $response->returnResponse(200, '', '');
-                } else if ($action === 'open-grooming') {
-                    $sprint = getSprintInfoById($sprint_id);
-                    $response->returnResponse(200, $sprint, '');
                 } else {
                     $response->returnResponse(400, '', 'Invalid action');
                 }
@@ -160,7 +157,7 @@
                 SprintRepository::updateSprintStatus($sprint_id, Sprint::$statuses['closed']);
                 $response->returnResponse(200, '', '');
                 break;
-                
+
             default:
                 $response->returnResponse(400, '', '');
         }

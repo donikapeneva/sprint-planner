@@ -11,6 +11,14 @@
         <?php
             include('./header.php');
         ?>
+        
+        <div class="flex-container-center">
+            <div id="error-response" class="card #fbe9e7 deep-orange lighten-5 response-message hidden"></div>
+        </div>
+        <div class="flex-container-center">
+            <div id="success-response" class="card #f1f8e9 light-green lighten-5 response-message hidden"></div>
+        </div>
+        
         <div class="flex-container-center flex-center-width">
             <h1>Grooming</h1>
             <h4 id="sprint-room-id"></h4>

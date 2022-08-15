@@ -181,9 +181,8 @@ const autoExpand = (field) => {
 
 function getSprint() {
     const ajaxReques = new XMLHttpRequest();
-    const data = {sprintId: state.sprintId, action: 'open-grooming'};
-    ajaxReques.open('POST', '../service/Sprints.php');
-    ajaxReques.send(JSON.stringify(data));
+    ajaxReques.open('GET', '../service/Sprints.php/'+state.sprintId);
+    ajaxReques.send();;
 
     ajaxReques.onreadystatechange = () => {
         console.log('>>>> ajaxReques', ajaxReques);

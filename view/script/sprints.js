@@ -73,15 +73,26 @@ const createSprintColNode = (text) => {
 
 const createSprintActions = (id, status) => {
     const actions = document.createElement('td');
-    let openRoomDUrl;
+    // let openRoomDUrl;
+    let callback;
     
     switch (status) {
         case 'NEW':
+            callback = initRoomForGrooming;
+            // openRoomDUrl = './grooming-room.php';
+            break;
         case 'GROOMING': 
-            openRoomDUrl = './grooming-room.php';
+            callback = openRoomForGrooming;
+            // openRoomDUrl = './grooming-room.php';
             break;
         case 'PLANNING':
-            openRoomDUrl = './planning-room.php';
+            callback = openRoomForPlanning;
+            // openRoomDUrl = './planning-room.php';
+            break;
+
+        case 'ACTIVE':
+        callback = closeSprint;
+            // openRoomDUrl = './planning-room.php';
             break;
         default:
             openRoomDUrl = '';
@@ -92,11 +103,63 @@ const createSprintActions = (id, status) => {
         window.location.href = './edit-sprint.php?sprintId=' + id;
     });
     const action = buildButtonEl(id, 'Open Room', actionButtonStyle.accent, () => {
-        window.location.href = `./${openRoomDUrl}?sprintId=${id}`;
+        callback(id);
     });
     actions.appendChild(edit);
     actions.appendChild(action);
     return actions;
+}
+
+const initRoomForGrooming = (id) => {
+    const openRoomDUrl = './grooming-room.php';
+    const data = {sprintId: id, action: 'open-grooming'};
+    const ajaxReques = new XMLHttpRequest();
+    ajaxReques.open('POST', '../service/Sprints.php');
+    ajaxReques.send(JSON.stringify(data));
+
+    ajaxReques.onreadystatechange = () => {
+        console.log('>>>> ajaxReques', ajaxReques);
+        if (ajaxReques.readyState === 4 && ajaxReques.status == 200) {
+            
+            window.location.href = `./${openRoomDUrl}?sprintId=${id}`;
+            
+        } else if (ajaxReques.readyState === 4 && (ajaxReques.status === 400 || ajaxReques.status === 404)) {
+            const response = JSON.parse(ajaxReques.responseText);
+            showError(response.error);
+        } else if (ajaxReques.readyState === 4  && (ajaxReques.status === 500)) {
+            showError('Service unavailable');
+        }
+    }
+}
+
+const openRoomForGrooming = (id) => {
+    const openRoomDUrl = './grooming-room.php';
+    window.location.href = `./${openRoomDUrl}?sprintId=${id}`;
+}
+
+const openRoomForPlanning = (id) => {
+    const openRoomDUrl = './planning-room.php';
+    window.location.href = `./${openRoomDUrl}?sprintId=${id}`;
+}
+
+const closeSprint = (id) => {
+    const ajaxReques = new XMLHttpRequest();
+    
+    const data = {sprintId: id, action: 'close-sprint'};
+    ajaxReques.open('POST', '../service/Sprints.php');
+    ajaxReques.send(JSON.stringify(data));
+
+    ajaxReques.onreadystatechange = () => {
+        if (ajaxReques.readyState === 4 && ajaxReques.status == 200) {
+            window.location.replace = `./sprints.php`;
+            
+        } else if (ajaxReques.readyState === 4 && (ajaxReques.status === 400 || ajaxReques.status === 404)) {
+            const response = JSON.parse(ajaxReques.responseText);
+            showError(response.error);
+        } else if (ajaxReques.readyState === 4  && (ajaxReques.status === 500)) {
+            showError('Service unavailable');
+        }
+    }
 }
 
 function buildButtonEl(id, text, style, onClick) {
