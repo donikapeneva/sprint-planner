@@ -12,18 +12,16 @@ function buildUniqueId(prefix = 'comment') {
 const state = {
     sprintId: '',
     sprintRoomId: '',
-    tasks: []
+    tasks: [],
+    comment: '',
+    answer: ''
 };
 
 function init() {
     const urlParams = new URLSearchParams(window.location.search);
     state.sprintId = urlParams.get('sprintId');
-    
     getSprint();
-
-    // sprintRoomId.addEventListener('keyup', (e) => handleFieldChange(e.target.value, 'sprintRoomId'))
     endGrooming.addEventListener('click', handleEndGrooming);
-
 }
 
 function renderTaskList() {
@@ -32,7 +30,8 @@ function renderTaskList() {
     state.tasks.forEach((task) => {
         console.log('>> task', task);
         const item = buildTaskItemEl(task);
-        item.addEventListener('keyup', e => updateField(e.target.value));
+        //global change listener - autosave 
+        item.addEventListener('keyup',  debounce(() => handleUpdateTask(task.publicId)));
         frag.appendChild(item);
     });
 
@@ -40,7 +39,6 @@ function renderTaskList() {
         tasksList.removeChild(tasksList.lastChild);
     }
     tasksList.appendChild(frag);
-
 }
 
 function renderSprintDetails() {
@@ -63,20 +61,20 @@ function buildTaskItemEl({ publicId, isApprovedForPlanning, epicLink, taskLink, 
     //     const tag = comment.type === 'DEV' ? 'DEV' : 'BUSINESS';
 
     //     const row = buildContainer('s12');
-    //     row.appendChild(buildCommentEl(tag, comment.content, 's4'));
-    //     row.appendChild(buildCommentEl('answer', answer, 's4'));
+    //     row.appendChild(buildTextEl(tag, comment.content, 's4'));
+    //     row.appendChild(buildTextEl('answer', answer, 's4'));
     //     commentSection.appendChild(row);
     // });
 
     //comments
     const commentRow = buildContainer('s12');
-    commentRow.appendChild(buildCommentEl('tag', devComments, 's7', onAddComment, publicId));
-    commentRow.appendChild(buildCommentEl('answer', answer, 's5', onAddAnswer, publicId));
+    commentRow.appendChild(buildTextEl('tag', devComments, 's7', onAddComment, publicId));
+    commentRow.appendChild(buildTextEl('answer', answer, 's5', onAddAnswer, publicId));
     const button = createButton('Add');
     button.addEventListener('click', onAddComment.bind(publicId));
     commentRow.appendChild(button);
 
-    taskItem.appendChild(createCheckboxNode(approvedForPlanning, 's1', publicId));
+    taskItem.appendChild(createCheckboxNode(approvedForPlanning, 's1', publicId, handleSetApprovedForPlanning));
     taskItem.appendChild(buildButtonEl(epicLink, 's1'));
     taskItem.appendChild(buildButtonEl(taskLink, 's1'));
     taskItem.appendChild(createTaskColNode(taskDescription, 's3'));
@@ -128,6 +126,17 @@ const handleSetApprovedForPlanning = (e, checkbox, id) => {
     handleUpdateTask(id);
 }
 
+function onAddAnswer(e ) { };
+
+function onAddComment(element, id) {
+    console.log('>>> onAddComment e ', id);
+    // state.tasks.forEach(task => {
+    //     if (task.publicId === id) {
+    //         task.comments.push(element.value);
+    //     }
+    // })
+}
+
 function buildButtonEl(link, gridColSize) {
     
     const div = document.createElement('div');
@@ -158,7 +167,7 @@ function buildContainer (gridColSize) {
     return div;
 }
 
-function buildCommentEl(tag, text, gridColSize, onClick, id) {
+function buildTextEl(tag, text, gridColSize, onClick, id) {
     
     const div = document.createElement('div');
 
@@ -214,12 +223,6 @@ function getSprint() {
             showError('Service unavailable');
         }
     }
-}
-
-function onAddAnswer(e ) { };
-
-function onAddComment(e, id ) {
-    console.log('>>> onAddComment e ', e, id);
 }
 
 function handleEndGrooming(e) {

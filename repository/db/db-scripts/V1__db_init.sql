@@ -32,12 +32,13 @@ create table sprint_planner.`task` (
     `is_approved_for_planning` bit not null DEFAULT 0,
     `is_included_in_sprint` bit not null DEFAULT 0,
     
-    `assignee` int,
+    -- `assignee` int,
+    `assignee` varchar(100),
     `story_points` int,
 
     `sprint_id` int not null,
     primary key (`id`),
-    constraint `fk_assignee` foreign key (`assignee`) references `user` (`id`),
+    -- constraint `fk_assignee` foreign key (`assignee`) references `user` (`id`),
     constraint `fk_sprint_id` foreign key (`sprint_id`) references `sprint` (`id`)
 ) ;
 

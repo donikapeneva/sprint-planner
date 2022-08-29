@@ -58,13 +58,16 @@
                 </div>
 
                 <ul id="tasksList" class="form-width row "></ul>
-
-                <div class="center form-button">
-                    <input id="create-sprint-btn" type="submit" value="Create Sprint" name="submit" class="btn"/>
-                </div>
-
             </form>
-           
+            
+            <footer class="">
+            <div class="container">
+                    <div class="center form-button">
+                        <input id='create-sprint-btn' type="submit" value="Create Sprint" name="submit" class="btn"/>
+                    </div>
+            </div>
+
+        </footer>
             
         <script src="./script/create-new-sprint.js"></script>
     </body>
