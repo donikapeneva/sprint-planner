@@ -83,6 +83,15 @@ class SprintRepository {
         $query->execute([$newStatus, $sprintId]);
 
     }
+
+    public static function deleteSprintById($sprintId) {
+        $sql = 'DELETE  
+                FROM sprint 
+                WHERE id = ?';
+        $query = Database::getInstance()->getConnection()
+            ->prepare($sql);
+        $query->execute([$sprintId]);
+    }
 }
 
 ?>

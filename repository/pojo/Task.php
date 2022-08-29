@@ -6,10 +6,10 @@ class Task {
     public $epicLink;
     public $taskLink;
     public $taskDescription;
-    public $is_approved_for_planning;
-    public $is_included_in_sprint;
+    public $isApprovedForPlanning;
+    public $isIncludedInSprint;
     public $assignee;
-    public $story_points;
+    public $storyPoints;
     public $sprint_id;
 
     public function __construct() {}

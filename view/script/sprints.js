@@ -82,6 +82,10 @@ const createSprintActions = (id, status) => {
         window.location.href = './edit-sprint.php?sprintId=' + id;
     });
 
+    const deleteBtn = buildButtonEl(id, 'Delete', actionButtonStyle.normal, () => { 
+        deleteSprint(id);
+    });
+
     switch (status) {
         case 'NEW':
             actionsAllowed.push(edit);
@@ -111,8 +115,12 @@ const createSprintActions = (id, status) => {
         default:
             break;
     }
-   
+
+
+    actionsAllowed.push(deleteBtn);
+    console.log(">>>>> actionsAllowed",actionsAllowed);
     actionsAllowed.forEach(action => actions.appendChild(action));
+    
 
     return actions;
 }
@@ -160,6 +168,27 @@ const closeSprint = (id) => {
         console.log(ajaxReques);
         if (ajaxReques.readyState === 4 && ajaxReques.status == 200) {
             window.location.reload();
+            
+        } else if (ajaxReques.readyState === 4 && (ajaxReques.status === 400 || ajaxReques.status === 404)) {
+            const response = JSON.parse(ajaxReques.responseText);
+            showError(response.error);
+        } else if (ajaxReques.readyState === 4  && (ajaxReques.status === 500)) {
+            showError('Service unavailable');
+        }
+    }
+}
+
+const deleteSprint = (id) => {
+    const ajaxReques = new XMLHttpRequest();
+    
+    const data = {sprintId: id, action: 'close-sprint'};
+    ajaxReques.open('DELETE', '../service/Sprints.php');
+    ajaxReques.send(JSON.stringify(data));
+
+    ajaxReques.onreadystatechange = () => {
+        console.log(ajaxReques);
+        if (ajaxReques.readyState === 4 && ajaxReques.status == 200) {
+           window.location.reload();
             
         } else if (ajaxReques.readyState === 4 && (ajaxReques.status === 400 || ajaxReques.status === 404)) {
             const response = JSON.parse(ajaxReques.responseText);

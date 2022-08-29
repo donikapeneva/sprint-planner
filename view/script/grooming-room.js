@@ -31,7 +31,7 @@ function renderTaskList() {
 
     state.tasks.forEach((task) => {
         console.log('>> task', task);
-        const item = buildTaskItemEl(task.publicId, task.epicLink, task.taskLink, task.taskDescription,
+        const item = buildTaskItemEl(task.publicId, task.isApprovedForPlanning, task.epicLink, task.taskLink, task.taskDescription,
                                     task.comments);
         item.addEventListener('keyup', e => updateField(e.target.value));
         frag.appendChild(item);
@@ -49,12 +49,12 @@ function renderSprintDetails() {
 }
 
 
-function buildTaskItemEl(id, epicLinkValue, taskLinkValue, taskDescriptionValue, comments) {
+function buildTaskItemEl(id, isApprovedForPlanning, epicLinkValue, taskLinkValue, taskDescriptionValue, comments) {
     console.log('>>> buildTaskItemEl', id);
     const taskItem = document.createElement('div');
     taskItem.classList.add('task-row', 'row');
     // taskItem.publicId = id;
-    const approvedForPlanning = '';
+    const approvedForPlanning = isApprovedForPlanning;
     const devComments = 'predefined comment';
     const answer = '';
 
@@ -77,7 +77,7 @@ function buildTaskItemEl(id, epicLinkValue, taskLinkValue, taskDescriptionValue,
     button.addEventListener('click', onAddComment.bind(id));
     commentRow.appendChild(button);
 
-    taskItem.appendChild(createCheckboxNode(approvedForPlanning, 's1'));
+    taskItem.appendChild(createCheckboxNode(approvedForPlanning, 's1', id));
     taskItem.appendChild(buildButtonEl(epicLinkValue, 's1'));
     taskItem.appendChild(buildButtonEl(taskLinkValue, 's1'));
     taskItem.appendChild(createTaskColNode(taskDescriptionValue, 's3'));
@@ -99,13 +99,16 @@ const createTaskColNode = (text, gridColSize) => {
     return span;
 }
 
-const createCheckboxNode = (isChecked, gridColSize) => {
-    //todo add on click 
+const createCheckboxNode = (isChecked, gridColSize, id) => {
     
     const div = document.createElement('div');
     const checkbox = document.createElement('input');
     checkbox.classList.add('filled-in');
-    checkbox.checked = isChecked;
+    console.log(">>>> is checked,", isChecked);
+    console.log(">>>> createCheckboxNode id,", isChecked);
+    checkbox.checked = (isChecked == true);
+
+    div.addEventListener("click", (e) => handleSetApprovedForPlanning(e, checkbox, id));
 
     const span2 = document.createElement('span');
     checkbox.type = 'checkbox';
@@ -115,6 +118,20 @@ const createCheckboxNode = (isChecked, gridColSize) => {
     div.appendChild(checkbox);
     div.appendChild(span2);
     return div;
+}
+
+const handleSetApprovedForPlanning = (e, checkbox, id) => {
+    checkbox.checked = !checkbox.checked;
+    console.log(">>>> id", id);
+    console.log(">>>> state.tasks", state.tasks);
+    state.tasks.forEach(task => {
+        console.log(">>>> task", task);
+        if (task.publicId === id) {
+            task.isApprovedForPlanning = checkbox.checked;
+        }
+    })
+
+    handleUpdateTask(id);
 }
 
 function buildButtonEl(link, gridColSize) {
@@ -238,6 +255,33 @@ function handleEndGrooming(e) {
         }
     }
 }
+
+function handleUpdateTask(taskId) {
+    
+    console.log(">>>> task ", state.tasks.filter(task => task.publicId === taskId));
+    const data = {
+        task: state.tasks.filter(task => task.publicId === taskId)[0]
+    };
+    
+    const ajaxReques = new XMLHttpRequest();
+    ajaxReques.open('PUT', '../service/Tasks.php/' + taskId);
+    ajaxReques.send(JSON.stringify(data));
+
+    ajaxReques.onreadystatechange = () => {
+        console.log('>>>> ajaxReques', ajaxReques);
+        if (ajaxReques.readyState === 4 && ajaxReques.status == 200) {
+            //window.location.replace('./sprints.php');
+        } else if (ajaxReques.readyState === 4 
+            && (ajaxReques.status === 400 || ajaxReques.status === 404
+                || ajaxReques.status === 401)) {
+            const response = JSON.parse(ajaxReques.responseText);
+            showError(response.error);
+        } else if (ajaxReques.readyState === 4  && (ajaxReques.status === 500)) {
+            showError('Service unavailable');
+        }
+    }
+}
+
 
 const hideSuccess = () => success.classList.add('hidden');
 

@@ -23,7 +23,7 @@
     switch ($requestMethod) {
         case 'GET': 
             if (!empty($sprint_id)) {
-                $sprint = getSprintInfoById($sprint_id);
+                $sprint = getSprintInfo($sprint_id);
                 $response->returnResponse(200, $sprint, '');
             } 
             else {
@@ -57,6 +57,21 @@
             update($request);
             break;
         }
+        case 'DELETE': {
+            if (!SessionManager::isUserLoggedInAsMaster()) {
+                $response->returnResponse(401, '', 'Not authorized');
+            }
+
+            $json = file_get_contents('php://input');
+            $request = json_decode($json);
+
+            if (!empty($request->sprintId) && !empty($request->action)) {
+                deleteSprint($request->sprintId);
+            } else {
+                $response->returnResponse(400, '', 'Bad Request');
+            }
+            break;
+        }
         default: 
             $response->returnResponse(404, '', 'Not Found');
             break;
@@ -84,9 +99,22 @@
         $response->returnResponse(200, $data, '');
     }
 
-    function getSprintInfoById($sprintId) {
-        $sprintData = SprintRepository::getSprintById($sprintId);
-        $tasks = TaskRepository::getAllBySprintId($sprintId);
+    function getSprintInfo($sprintId) {
+        $sprintData = SprintRepository::getSprintById($sprintId);    
+        
+        switch($sprintData->status) {
+            case Sprint::$statuses['planning'] :
+                $tasks = TaskRepository::getAllBySprintIdAndAreApproved($sprintId);
+                break;
+
+            case Sprint::$statuses['active'] :
+            case Sprint::$statuses['new']:
+            case Sprint::$statuses['grooming'] :
+                
+            default:
+                $tasks = TaskRepository::getAllBySprintId($sprintId);
+        }   
+
         return array ('sprint' => $sprintData, 'tasks' => $tasks);
     }
 
@@ -169,4 +197,11 @@
         }
         
     }
+
+    function deleteSprint($sprintId) {
+        TaskRepository::deleteAllBySprintId($sprintId);
+        SprintRepository::deleteSprintById($sprintId);
+        return SprintRepository::getAll();
+    }
+
 ?>
