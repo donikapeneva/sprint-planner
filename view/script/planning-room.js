@@ -31,9 +31,8 @@ function renderTaskList() {
 
     state.tasks.forEach((task) => {
         console.log('>> task', task);
-        const item = buildTaskItemEl(task.publicId, task.epicLink, task.taskLink, task.taskDescription,
-                                    task.comments);
-        item.addEventListener('keyup', e => updateField(e.target.value));
+        const item = buildTaskItemEl(task);
+        // item.addEventListener('keyup', e => updateField(e.target.value));
         frag.appendChild(item);
     });
 
@@ -49,14 +48,12 @@ function renderSprintDetails() {
 }
 
 
-function buildTaskItemEl(id, epicLinkValue, taskLinkValue, taskDescriptionValue, comments) {
-    console.log('>>> buildTaskItemEl', id);
+function buildTaskItemEl({ publicId, epicLink, taskLink, taskDescription,
+                            isIncludedInSprint, assignee, storyPoints, comments}) {
+    console.log('>>> buildTaskItemEl', publicId);
     const taskItem = document.createElement('div');
     taskItem.classList.add('task-row', 'row');
-    // taskItem.publicId = id;
-    const assignee = '';
-    const storypoints = '';
-    const includedInSprint = false;
+
     const devComments = 'predefined comment';
     const answer = '';
 
@@ -66,24 +63,24 @@ function buildTaskItemEl(id, epicLinkValue, taskLinkValue, taskDescriptionValue,
     //     const tag = comment.type === 'DEV' ? 'DEV' : 'BUSINESS';
 
     //     const row = buildContainer('s12');
-    //     row.appendChild(buildCommentEl(tag, comment.content, 's4'));
-    //     row.appendChild(buildCommentEl('answer', answer, 's4'));
+    //     row.appendChild(buildTextEl(tag, comment.content, 's4'));
+    //     row.appendChild(buildTextEl('answer', answer, 's4'));
     //     commentSection.appendChild(row);
     // });
 
     //comments
     const commentRow = buildContainer('s12');
-    commentRow.appendChild(buildCommentEl('tag', devComments, 's7', onAddComment, id));
-    commentRow.appendChild(buildCommentEl('answer', answer, 's5', onAddAnswer, id));
+    commentRow.appendChild(buildTextEl('tag', devComments, 's7', onAddComment, publicId));
+    commentRow.appendChild(buildTextEl('answer', answer, 's5', onAddAnswer, publicId));
     const button = createButton('Add');
-    button.addEventListener('click', onAddComment.bind(id));
+    button.addEventListener('click', onAddComment.bind(publicId));
     commentRow.appendChild(button);
 
-    taskItem.appendChild(buildCommentEl('asignee', assignee, 's1', () => {}, id));
-    taskItem.appendChild(createCheckboxNode(includedInSprint, 's1'));
-    taskItem.appendChild(buildCommentEl('storyPoints', storypoints, 's1', () => {}, id));
-    taskItem.appendChild(buildButtonEl(taskLinkValue, 's1'));
-    taskItem.appendChild(createTaskColNode(taskDescriptionValue, 's2'));
+    taskItem.appendChild(buildTextEl('asignee', assignee, 's1', handleSetAssignee, publicId));
+    taskItem.appendChild(createCheckboxNode(isIncludedInSprint, 's1', publicId, handleSetAIncludedInSprint));
+    taskItem.appendChild(buildTextEl('storyPoints', storyPoints, 's1', handleSetStoryPoints, publicId));
+    taskItem.appendChild(buildButtonEl(taskLink, 's1'));
+    taskItem.appendChild(createTaskColNode(taskDescription, 's2'));
 
 
     commentSection.appendChild(commentRow);
@@ -102,13 +99,12 @@ const createTaskColNode = (text, gridColSize) => {
     return span;
 }
 
-const createCheckboxNode = (isChecked, gridColSize) => {
-    //todo add on click 
-    
+const createCheckboxNode = (isChecked, gridColSize, id, onChange) => {
     const div = document.createElement('div');
     const checkbox = document.createElement('input');
     checkbox.classList.add('filled-in');
     checkbox.checked = isChecked;
+    div.addEventListener("click", (e) => onChange(e, checkbox, id));
 
     const span2 = document.createElement('span');
     checkbox.type = 'checkbox';
@@ -120,8 +116,38 @@ const createCheckboxNode = (isChecked, gridColSize) => {
     return div;
 }
 
+const handleSetAIncludedInSprint = (e, checkbox, id) => {
+    checkbox.checked = !checkbox.checked;
+    state.tasks.forEach(task => {
+        if (task.publicId === id) {
+            task.isIncludedInSprint = checkbox.checked;
+        }
+    })
+
+    handleUpdateTask(id);
+}
+
+const handleSetAssignee = (element, id) => {
+    state.tasks.forEach(task => {
+        if (task.publicId === id) {
+            task.assignee = element.value;
+        }
+    })
+
+    handleUpdateTask(id);
+}
+
+const handleSetStoryPoints = (element, id) => {
+    state.tasks.forEach(task => {
+        if (task.publicId === id) {
+            task.storyPoints = element.value;
+        }
+    })
+
+    handleUpdateTask(id);
+}
+
 function buildButtonEl(link, gridColSize) {
-    
     const div = document.createElement('div');
     const text = link ? link.substring(link.length - 5) : '';
     const button = createButton(text);
@@ -151,7 +177,7 @@ function buildContainer (gridColSize) {
     return div;
 }
 
-function buildCommentEl(tag, text, gridColSize, onClick, id) {
+function buildTextEl(tag, text, gridColSize, onClick, id) {
     
     const div = document.createElement('div');
 
@@ -160,9 +186,7 @@ function buildCommentEl(tag, text, gridColSize, onClick, id) {
     textarea.textContent = text;
 
     textarea.addEventListener('input', () => autoExpand(textarea));
-
-    // const button = createButton('Add');
-    // button.addEventListener('click', onAddComment.bind(id));
+    textarea.addEventListener('keyup', debounce(() => onClick(textarea, id)));
 
     div.className = `col ${gridColSize}`;
     div.appendChild(textarea);
@@ -240,6 +264,32 @@ function handleEndPlanning(e) {
     }
 }
 
+function handleUpdateTask(taskId) {
+    
+    console.log(">>>> task ", state.tasks.filter(task => task.publicId === taskId));
+    const data = {
+        task: state.tasks.filter(task => task.publicId === taskId)[0]
+    };
+    
+    const ajaxReques = new XMLHttpRequest();
+    ajaxReques.open('PUT', '../service/Tasks.php/' + taskId);
+    ajaxReques.send(JSON.stringify(data));
+
+    ajaxReques.onreadystatechange = () => {
+        console.log('>>>> ajaxReques', ajaxReques);
+        if (ajaxReques.readyState === 4 && ajaxReques.status == 200) {
+            //window.location.replace('./sprints.php');
+        } else if (ajaxReques.readyState === 4 
+            && (ajaxReques.status === 400 || ajaxReques.status === 404
+                || ajaxReques.status === 401)) {
+            const response = JSON.parse(ajaxReques.responseText);
+            showError(response.error);
+        } else if (ajaxReques.readyState === 4  && (ajaxReques.status === 500)) {
+            showError('Service unavailable');
+        }
+    }
+}
+
 const hideSuccess = () => success.classList.add('hidden');
 
 const showSuccess = (message) => {
@@ -262,7 +312,8 @@ function debounce(func, timeout = 1000){
     };
 }
 
-function saveInput(){
+function saveInput(asd){
+    console.log(">>>> asd",asd);
     console.log('Saving data');
 }
   

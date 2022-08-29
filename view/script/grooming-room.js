@@ -31,8 +31,7 @@ function renderTaskList() {
 
     state.tasks.forEach((task) => {
         console.log('>> task', task);
-        const item = buildTaskItemEl(task.publicId, task.isApprovedForPlanning, task.epicLink, task.taskLink, task.taskDescription,
-                                    task.comments);
+        const item = buildTaskItemEl(task);
         item.addEventListener('keyup', e => updateField(e.target.value));
         frag.appendChild(item);
     });
@@ -49,11 +48,11 @@ function renderSprintDetails() {
 }
 
 
-function buildTaskItemEl(id, isApprovedForPlanning, epicLinkValue, taskLinkValue, taskDescriptionValue, comments) {
-    console.log('>>> buildTaskItemEl', id);
+function buildTaskItemEl({ publicId, isApprovedForPlanning, epicLink, taskLink, taskDescription, comments }) {
+    console.log('>>> buildTaskItemEl', publicId);
     const taskItem = document.createElement('div');
     taskItem.classList.add('task-row', 'row');
-    // taskItem.publicId = id;
+
     const approvedForPlanning = isApprovedForPlanning;
     const devComments = 'predefined comment';
     const answer = '';
@@ -71,16 +70,16 @@ function buildTaskItemEl(id, isApprovedForPlanning, epicLinkValue, taskLinkValue
 
     //comments
     const commentRow = buildContainer('s12');
-    commentRow.appendChild(buildCommentEl('tag', devComments, 's7', onAddComment, id));
-    commentRow.appendChild(buildCommentEl('answer', answer, 's5', onAddAnswer, id));
+    commentRow.appendChild(buildCommentEl('tag', devComments, 's7', onAddComment, publicId));
+    commentRow.appendChild(buildCommentEl('answer', answer, 's5', onAddAnswer, publicId));
     const button = createButton('Add');
-    button.addEventListener('click', onAddComment.bind(id));
+    button.addEventListener('click', onAddComment.bind(publicId));
     commentRow.appendChild(button);
 
-    taskItem.appendChild(createCheckboxNode(approvedForPlanning, 's1', id));
-    taskItem.appendChild(buildButtonEl(epicLinkValue, 's1'));
-    taskItem.appendChild(buildButtonEl(taskLinkValue, 's1'));
-    taskItem.appendChild(createTaskColNode(taskDescriptionValue, 's3'));
+    taskItem.appendChild(createCheckboxNode(approvedForPlanning, 's1', publicId));
+    taskItem.appendChild(buildButtonEl(epicLink, 's1'));
+    taskItem.appendChild(buildButtonEl(taskLink, 's1'));
+    taskItem.appendChild(createTaskColNode(taskDescription, 's3'));
 
 
     commentSection.appendChild(commentRow);
@@ -99,16 +98,14 @@ const createTaskColNode = (text, gridColSize) => {
     return span;
 }
 
-const createCheckboxNode = (isChecked, gridColSize, id) => {
+const createCheckboxNode = (isChecked, gridColSize, id, onClick) => {
     
     const div = document.createElement('div');
     const checkbox = document.createElement('input');
     checkbox.classList.add('filled-in');
-    console.log(">>>> is checked,", isChecked);
-    console.log(">>>> createCheckboxNode id,", isChecked);
     checkbox.checked = (isChecked == true);
 
-    div.addEventListener("click", (e) => handleSetApprovedForPlanning(e, checkbox, id));
+    div.addEventListener("click", (e) => onClick(e, checkbox, id));
 
     const span2 = document.createElement('span');
     checkbox.type = 'checkbox';
@@ -122,10 +119,7 @@ const createCheckboxNode = (isChecked, gridColSize, id) => {
 
 const handleSetApprovedForPlanning = (e, checkbox, id) => {
     checkbox.checked = !checkbox.checked;
-    console.log(">>>> id", id);
-    console.log(">>>> state.tasks", state.tasks);
     state.tasks.forEach(task => {
-        console.log(">>>> task", task);
         if (task.publicId === id) {
             task.isApprovedForPlanning = checkbox.checked;
         }
@@ -154,7 +148,6 @@ function createButton (text) {
     button.textContent = text;
     button.className = 'waves-effect waves-teal btn-flat secondary-color centered';
     
-
     return button;
 }
 

@@ -16,8 +16,6 @@
     
     preg_match('/(task-\d+)/', $uri, $matches);
     
-    echo $matches[1];
-
     if($matches) {
         $publicId = $matches[1];
     }
@@ -66,6 +64,9 @@
         $response = new Response();
         $task = TaskRepository::getIdByPublicId($publicId);
         $updatedTask = $request->task;
+
+        // $updatedTask
+
         TaskRepository::update($task->id, $updatedTask);
         $response->returnResponse(200, '', '');
     }
