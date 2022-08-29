@@ -44,6 +44,23 @@ class TaskRepository {
         return $query->fetchAll(PDO::FETCH_CLASS, 'Task');
     }
 
+    public static function getAllBySprintIdAndIncluded($sprintId) {
+        $sql = 'SELECT public_id as publicId, 
+                        epic_link as epicLink,
+                        task_link as taskLink, 
+                        short_description as taskDescription,
+                        assignee,
+                        story_points as storyPoints
+                FROM task 
+                WHERE sprint_id = ?
+                AND is_included_in_sprint = true';
+        $query = Database::getInstance()->getConnection()->prepare($sql);
+
+        $query->execute([$sprintId]);
+
+        return $query->fetchAll(PDO::FETCH_CLASS, 'Task');
+    }
+
     public static function getIdByPublicId($publicId) {
         $sql = 'SELECT id
                 FROM task 

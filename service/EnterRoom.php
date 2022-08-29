@@ -29,9 +29,17 @@
     SessionManager::start();
     SessionManager::setUserMail($request->email);
     
-    
-    $redirectTo = $room->status === Sprint::$statuses['grooming'] 
-                    ? './view/grooming-room.php' : './view/planning-room.php';
+    switch ($room->status) {
+        case Sprint::$statuses['grooming'] :
+            $redirectTo = './view/grooming-room.php';
+            break;
+        case Sprint::$statuses['planning'] :
+            $redirectTo = './view/planning-room.php';
+            break;
+        default:
+            $redirectTo = './view/view-room.php';
+            break;
+    }
 
     $data = array ('sprintId' => $room->id, 'redirectUrl' => $redirectTo);
     $response->returnResponse(200, $data, '');
@@ -46,7 +54,11 @@
     }
 
     function isRoomOpen($room) {
-        return $room->status === Sprint::$statuses['grooming'] || $room->status === Sprint::$statuses['planning'];
+        return $room->status === Sprint::$statuses['grooming'] 
+            || $room->status === Sprint::$statuses['planning']
+            //only for view
+            || $room->status === Sprint::$statuses['active']
+            || $room->status === Sprint::$statuses['closed'];
     }
     
 

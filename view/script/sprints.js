@@ -82,6 +82,10 @@ const createSprintActions = (id, status) => {
         window.location.href = './edit-sprint.php?sprintId=' + id;
     });
 
+    const view = buildButtonEl(id, 'View', actionButtonStyle.normal, () => { 
+        window.location.href = './view-room.php?sprintId=' + id;
+    });
+
     const deleteBtn = buildButtonEl(id, 'Delete', actionButtonStyle.normal, () => { 
         deleteSprint(id);
     });
@@ -107,12 +111,13 @@ const createSprintActions = (id, status) => {
             break;
 
         case 'ACTIVE':
-            // actionsAllowed.add(view);
+            actionsAllowed.push(view);
             actionsAllowed.push(buildButtonEl(id, 'Close Sprint', actionButtonStyle.accent, () => {
                 closeSprint(id);
             }));
             break;
         default:
+            actionsAllowed.push(view);
             break;
     }
 

@@ -107,6 +107,10 @@
                 $tasks = TaskRepository::getAllBySprintIdAndAreApproved($sprintId);
                 break;
 
+            case Sprint::$statuses['closed'] :
+            case Sprint::$statuses['active'] :
+                $tasks = TaskRepository::getAllBySprintIdAndIncluded($sprintId);
+                break;
             case Sprint::$statuses['active'] :
             case Sprint::$statuses['new']:
             case Sprint::$statuses['grooming'] :
