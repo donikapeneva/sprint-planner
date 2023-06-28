@@ -13,8 +13,9 @@ const state = {
     sprintId: '',
     sprintRoomId: '',
     tasks: [],
-    comment: '',
-    answer: ''
+    // comments: [],
+    // comment: '',
+    // answer: ''
 };
 
 function init() {
@@ -31,7 +32,7 @@ function renderTaskList() {
         console.log('>> task', task);
         const item = buildTaskItemEl(task);
         //global change listener - autosave 
-        item.addEventListener('keyup',  debounce(() => handleUpdateTask(task.publicId)));
+        // item.addEventListener('keyup',  debounce(() => handleUpdateTask(task.publicId)));
         frag.appendChild(item);
     });
 
@@ -68,10 +69,13 @@ function buildTaskItemEl({ publicId, isApprovedForPlanning, epicLink, taskLink, 
 
     //comments
     const commentRow = buildContainer('s12');
-    commentRow.appendChild(buildTextEl('tag', devComments, 's7', onAddComment, publicId));
-    commentRow.appendChild(buildTextEl('answer', answer, 's5', onAddAnswer, publicId));
+    //onAddComment - will be triggered after  change; we dont want it, if we use the add button
+    //another approach is - auto save, if click add - add new empty text ares
+    commentRow.appendChild(buildTextElComment('tag', devComments, 's7', onAddComment, publicId));
+    commentRow.appendChild(buildTextElComment('answer', answer, 's5', onAddAnswer, publicId));
     const button = createButton('Add');
-    button.addEventListener('click', onAddComment.bind(publicId));
+    
+    // button.addEventListener('click', onAddComment.bind(publicId));
     commentRow.appendChild(button);
 
     taskItem.appendChild(createCheckboxNode(approvedForPlanning, 's1', publicId, handleSetApprovedForPlanning));
@@ -128,11 +132,55 @@ const handleSetApprovedForPlanning = (e, checkbox, id) => {
 
 function onAddAnswer(e ) { };
 
-function onAddComment(element, id) {
-    console.log('>>> onAddComment e ', id);
+function onAddComment(e) {
+    e.preventDefault();
+    const newTask = {
+        epicLink: state.epicLink,
+        taskLink: state.taskLink,
+        taskDescription: state.taskDescription,
+        publicId: buildUniqueId('task')
+
+    }
+    state.tasks = [...state.tasks, newTask];
+    state.epicLink = '';
+    state.taskLink = '';
+    state.taskDescription = '';
+    renderInput();
+    renderTaskList();
+
+
+    // console.log(">>> comment id",commentId, taskId)
+    // if(!commentId) {
+    //     //no current comments;
+    //     commentId = buildUniqueId();
+    //     state.tasks.forEach(task => {
+    //         if (task.publicId === taskId) {
+    //             //TODO this should be initial empty (BE Should return it)
+    //             if(!task.comments) {
+    //                 task.comments = [{id: commentId, comment: element.value, answer: ''}];
+    //             } else {
+    //                 console.log(">>> searching comments")
+    //                 task.comments.forEach(commentRow => {
+    //                     if(commentId === commentRow.id) {
+    //                         console.log(">>> will update");
+    //                         commentRow.comment = element.value
+    //                     }
+    //                 })
+    //             }
+    //         }
+    //     });
+
+    //     console.log(state.tasks);
+    // }
+    // console.log('>>> onAddComment e ', id);
+    // console.log(state.tasks.filter(task => task.publicId === id));
+    // // comment = {idComment ,comment: '', answer : ''}
+
     // state.tasks.forEach(task => {
     //     if (task.publicId === id) {
-    //         task.comments.push(element.value);
+    //         if(!task.comments) {
+    //             const commentId = buildUniqueId();
+    //         }
     //     }
     // })
 }
@@ -167,7 +215,7 @@ function buildContainer (gridColSize) {
     return div;
 }
 
-function buildTextEl(tag, text, gridColSize, onClick, id) {
+function buildTextEl(tag, text, gridColSize, onUpdate, id) {
     
     const div = document.createElement('div');
 
@@ -176,6 +224,7 @@ function buildTextEl(tag, text, gridColSize, onClick, id) {
     textarea.textContent = text;
 
     textarea.addEventListener('input', () => autoExpand(textarea));
+    // textarea.addEventListener('keyup', debounce(() => onUpdate(textarea, id)));
 
     // const button = createButton('Add');
     // button.addEventListener('click', onAddComment.bind(id));
@@ -183,6 +232,22 @@ function buildTextEl(tag, text, gridColSize, onClick, id) {
     div.className = `col ${gridColSize}`;
     div.appendChild(textarea);
     // div.appendChild(button);
+    return div;
+}
+
+function buildTextElComment(tag, text, gridColSize, onUpdate, taskId, commentId) {
+    
+    const div = document.createElement('div');
+
+    const textarea = document.createElement('textarea');
+    textarea.className = 'comment';
+    textarea.textContent = text;
+
+    textarea.addEventListener('input', () => autoExpand(textarea));
+    textarea.addEventListener('keyup', debounce(() => onUpdate(textarea, taskId, commentId)));
+
+    div.className = `col ${gridColSize}`;
+    div.appendChild(textarea);
     return div;
 }
 

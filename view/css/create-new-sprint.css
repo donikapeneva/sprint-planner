@@ -3,3 +3,7 @@
 .form-width {
     width: 80%;
 }
+
+.col { 
+    word-break: break-all;
+}
