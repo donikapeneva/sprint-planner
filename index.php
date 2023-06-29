@@ -31,7 +31,7 @@
             
             <h1>Sprint Planner</h1>
             <form id="enter-room-form" action="./service/EnterRoom.php" method="POST" class="center white"  >
-                <h3 class="flex-item">Enter Room</h1>
+                <h3 class="flex-item">Enter Room</h3>
         
                 <div class="center center-align">
                     <input id="email" placeholder="your email" name="email" type="text" class="input-field center center-align"/>

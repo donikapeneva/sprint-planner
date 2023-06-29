@@ -34,14 +34,21 @@ class Database {
             die("Connection failed: " . $conn->connect_error);
         }
 
-        if (!mysqli_select_db($conn, Database::$db)) {
-            echo ">>> Will create Database<br>";
+        if (mysqli_select_db($conn, Database::$db)) {
+            echo ">>> Connected to Database sprint_planner <br>";
             $files = glob('./db-scripts/*.{sql}', GLOB_BRACE);
             
             foreach($files as $file) {
                 echo ">>> Executing ".$file.'<br>';
                 $init_sql = file_get_contents($file);
                 if ($conn->multi_query($init_sql ) === TRUE) {
+                    do {
+                        // Consume each result set
+                        if ($result = $conn->store_result()) {
+                            $result->free();
+                        }
+                    } while ($conn->more_results() && $conn->next_result());
+
                     echo ">>> Database updated successfully<br>";
                 } else {
                     echo ">>> Error updating database: <br>" . $conn->error . '<br>';

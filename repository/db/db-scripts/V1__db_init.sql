@@ -1,4 +1,4 @@
-create database sprint_planner;
+-- create database sprint_planner;
 
 create table sprint_planner.`user` (
 	`id` int not null auto_increment,

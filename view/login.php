@@ -18,7 +18,7 @@
         
         <div class="header">
             <div>
-                <a href="../index.html" class="waves-effect waves-teal btn-flat secondary-color">
+                <a href="../index.php" class="waves-effect waves-teal btn-flat secondary-color">
                     < Back
                 </a>
             </div>
@@ -29,7 +29,7 @@
         <div class="flex-container-center flex-center-window">
             <h1>Sprint Planner</h1>
             <form id="login-form" class="center white"  >
-                <h3 class="flex-item">Enter as Master</h1>
+                <h3 class="flex-item">Enter as Master</h3>
         
                 <div class="center center-align">
                     <input id="email" placeholder="your email" name="email" type="text" class="input-field center center-align"/>
