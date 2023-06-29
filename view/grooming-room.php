@@ -56,15 +56,24 @@
             <div id="tasksList" class="form-width row flex-row"></div>
 
         </div>
-        
         <footer class="">
             <div class="container">
-                    <div class="center form-button">
-                        <input id='end-grooming-btn' type="submit" value="End Grooming" name="submit" class="btn"/>
-                    </div>
+                <div class="center form-button">
+        <?php
+            if(SessionManager::isUserLoggedInAsMaster()) {
+                echo '
+                    <input id="end-grooming-btn" type="submit" value="End Grooming" name="submit" class="btn"/>   
+                ';
+            } else {
+                echo '
+                   <input id="end-grooming-btn" type="submit" value="End Grooming" name="submit" class="btn" disabled/>      
+                ';
+            }
+        ?>
+                </div>
             </div>
-
         </footer>
+
            
         <script src="./script/shared.js"></script>
         <script src="./script/grooming-room.js"></script>

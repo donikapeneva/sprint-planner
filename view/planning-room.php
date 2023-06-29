@@ -63,7 +63,18 @@
         <footer class="">
             <div class="container">
                     <div class="center form-button">
-                        <input id='end-planning-btn' type="submit" value="End Planning" name="submit" class="btn"/>
+                        <?php
+                        if(SessionManager::isUserLoggedInAsMaster()) {
+                            echo '
+                                <input id="end-planning-btn" type="submit" value="End Planning" name="submit" class="btn"/> 
+                            ';
+                        } else {
+                            echo '
+                               <input id="end-planning-btn" type="submit" value="End Planning" name="submit" class="btn" disabled/>    
+                            ';
+                        }
+                        ?>
+
                     </div>
             </div>
 
