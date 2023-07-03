@@ -4,6 +4,7 @@ const success = document.getElementById('success-response');
 
 const sprintRoomId = document.getElementById('sprint-room-id');
 const endGrooming = document.getElementById('end-grooming-btn');
+const exportCsv = document.getElementById('export-btn');
 
 function buildUniqueId(prefix = 'comment') {
     return prefix + '-' + Math.floor(Math.random() * Date.now());
@@ -23,6 +24,7 @@ function init() {
     state.sprintId = urlParams.get('sprintId');
     getSprint();
     endGrooming.addEventListener('click', handleEndGrooming);
+    exportCsv.addEventListener('click', handleExportTasksAsCsv);
 }
 
 function renderTaskList() {
@@ -374,5 +376,37 @@ const updateField = debounce(() => saveInput());
 
 const isEmpty = value => value && value.trim() !== '' ? false : true;
 const isEmptyList = value => value && value.length > 0 ? false : true;
+
+const tasksToExportData = () => {
+    return state.tasks.map(({ epicLink, taskLink, taskDescription, comments }) => ({
+        epicLink, taskLink, taskDescription, comments
+    }));
+}
+const convertToCSV = (data) => {
+    const headers = Object.keys(data[0]);
+    const rows = data.map(obj => headers.map(header => obj[header]));
+    const csvArray = [headers, ...rows];
+    return csvArray.map(row => row.join(',')).join('\n');
+}
+
+const downloadCSV = (csvContent, fileName) => {
+    const link = document.createElement('a');
+    link.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent));
+    link.setAttribute('download', fileName);
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+const handleExportTasksAsCsv = () => {
+    console.log('>>> export', state.tasks);
+    //todo export all and export not approved
+    const data = tasksToExportData();
+    console.log('>> data', data);
+    const csvContent = convertToCSV(data);
+    downloadCSV(csvContent, 'tasks.csv');
+
+}
 
 document.addEventListener('DOMContentLoaded', init);
