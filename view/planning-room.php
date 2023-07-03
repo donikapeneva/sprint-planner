@@ -29,6 +29,8 @@
         <div class="flex-container-center flex-center-width">
             <h1>Planning</h1>
             <h4 id="sprint-room-id"></h4>
+            <button id="export-all-btn" class="btn waves-effect waves-light" type="button">Export tasks as CSV</button>
+
             <div class="form-width row tasks-header ">
                 <div class="col s1 bolder">
                     Assignee

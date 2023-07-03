@@ -208,7 +208,7 @@ const handleCsvUpload = (event) => {
         const contents = e.target.result;
         const lines = contents.split("\n");
 
-        for (let i = 0; i < lines.length; i++) {
+        for (let i = 1; i < lines.length; i++) {
             const rowData = lines[i].split(",");
 
             state.tasks = [...state.tasks, {

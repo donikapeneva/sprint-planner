@@ -29,8 +29,11 @@
         <div class="flex-container-center flex-center-width">
             <h1>Grooming</h1>
             <h4 id="sprint-room-id"></h4>
-            <button id="export-btn" class="btn waves-effect waves-light" type="button">Export tasks as CSV</button>
 
+            <div>
+            <button id="export-all-btn" class="btn waves-effect waves-light" type="button">Export all tasks as CSV</button>
+            <button id="export-not-approved-btn" class="btn waves-effect waves-light" type="button">Export not approved tasks as CSV</button>
+            </div>
 
             <div class="form-width row tasks-header ">
                 <div class="col s1 bolder">

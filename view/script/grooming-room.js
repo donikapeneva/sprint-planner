@@ -4,7 +4,8 @@ const success = document.getElementById('success-response');
 
 const sprintRoomId = document.getElementById('sprint-room-id');
 const endGrooming = document.getElementById('end-grooming-btn');
-const exportCsv = document.getElementById('export-btn');
+const exportAllCsv = document.getElementById('export-all-btn');
+const exportNotApprovedCsv = document.getElementById('export-not-approved-btn');
 
 function buildUniqueId(prefix = 'comment') {
     return prefix + '-' + Math.floor(Math.random() * Date.now());
@@ -24,7 +25,8 @@ function init() {
     state.sprintId = urlParams.get('sprintId');
     getSprint();
     endGrooming.addEventListener('click', handleEndGrooming);
-    exportCsv.addEventListener('click', handleExportTasksAsCsv);
+    exportAllCsv.addEventListener('click', handleExportTasksAsCsv);
+    exportNotApprovedCsv.addEventListener('click', handleExportNotApprovedTasksAsCsv);
 }
 
 function renderTaskList() {
@@ -377,11 +379,12 @@ const updateField = debounce(() => saveInput());
 const isEmpty = value => value && value.trim() !== '' ? false : true;
 const isEmptyList = value => value && value.length > 0 ? false : true;
 
-const tasksToExportData = () => {
-    return state.tasks.map(({ epicLink, taskLink, taskDescription, comments }) => ({
+const tasksToExportData = (tasks) => {
+    return tasks.map(({ epicLink, taskLink, taskDescription, comments }) => ({
         epicLink, taskLink, taskDescription, comments
     }));
 }
+
 const convertToCSV = (data) => {
     const headers = Object.keys(data[0]);
     const rows = data.map(obj => headers.map(header => obj[header]));
@@ -400,13 +403,15 @@ const downloadCSV = (csvContent, fileName) => {
 }
 
 const handleExportTasksAsCsv = () => {
-    console.log('>>> export', state.tasks);
-    //todo export all and export not approved
-    const data = tasksToExportData();
-    console.log('>> data', data);
+    const data = tasksToExportData(state.tasks);
     const csvContent = convertToCSV(data);
     downloadCSV(csvContent, 'tasks.csv');
+}
 
+const handleExportNotApprovedTasksAsCsv = () => {
+    const data = tasksToExportData(state.tasks.filter((task) => task.isApprovedForPlanning == false));
+    const csvContent = convertToCSV(data);
+    downloadCSV(csvContent, 'grooming-tasks.csv');
 }
 
 document.addEventListener('DOMContentLoaded', init);
