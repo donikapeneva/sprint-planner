@@ -68,6 +68,7 @@
                         <?php
                         if(SessionManager::isUserLoggedInAsMaster()) {
                             echo '
+                                <input id="auto-assign-btn" type="button" value="Auto Assign" name="submit" class="btn"/>
                                 <input id="end-planning-btn" type="submit" value="End Planning" name="submit" class="btn"/> 
                             ';
                         } else {

@@ -5,6 +5,7 @@ const success = document.getElementById('success-response');
 const sprintRoomId = document.getElementById('sprint-room-id');
 const endGrooming = document.getElementById('end-planning-btn');
 const exportAllCsv = document.getElementById('export-all-btn');
+const autoAssignBtn = document.getElementById('auto-assign-btn');
 
 function buildUniqueId(prefix = 'comment') {
     return prefix + '-' + Math.floor(Math.random() * Date.now());
@@ -13,7 +14,24 @@ function buildUniqueId(prefix = 'comment') {
 const state = {
     sprintId: '',
     sprintRoomId: '',
-    tasks: []
+    tasks: [],
+    teamMembers: [
+        {
+            name: "maria",
+            team: 'alpha',
+            role: 'frontend'
+        },
+        {
+            name: "pesho",
+            team: 'alpha',
+            role: 'backend'
+        },
+        {
+            name: "ivan",
+            team: 'alpha',
+            role: 'backend'
+        }
+    ]
 };
 
 function init() {
@@ -25,6 +43,7 @@ function init() {
     // sprintRoomId.addEventListener('keyup', (e) => handleFieldChange(e.target.value, 'sprintRoomId'))
     endGrooming.addEventListener('click', handleEndPlanning);
     exportAllCsv.addEventListener('click', handleExportTasksAsCsv);
+    autoAssignBtn.addEventListener('click', handleAutoAssign);
 
 }
 
@@ -352,5 +371,14 @@ const handleExportTasksAsCsv = () => {
     downloadCSV(csvContent, 'tasks.csv');
 }
 
+const handleAutoAssign = () => {
+    state.tasks = state.tasks.map((task) => {
+        const randomAssignee  = state.teamMembers[Math.floor(Math.random() * state.teamMembers.length)];
+        return {...task, assignee: randomAssignee.name};
+
+    })
+    renderTaskList();
+
+}
 
 document.addEventListener('DOMContentLoaded', init);
