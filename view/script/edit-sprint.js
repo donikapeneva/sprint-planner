@@ -10,6 +10,8 @@ const sprintRoomId = document.getElementById('sprint-id');
 const sprintPassword = document.getElementById('sprint-password');
 const createSprintBtn = document.getElementById('save-sprint-btn');
 
+const uploadCsv = document.getElementById('upload-csv');
+
 function buildUniqueId(prefix = 'task') {
     return prefix + '-' + Math.floor(Math.random() * Date.now());
 }
@@ -38,6 +40,8 @@ function init() {
     sprintRoomId.addEventListener('keyup', (e) => handleFieldChange(e.target.value, 'sprintRoomId'))
     sprintPassword.addEventListener('keyup', (e) => handleFieldChange(e.target.value, 'sprintPassword'))
     createSprintBtn.addEventListener('click', handleSaveSprint);
+    uploadCsv.addEventListener('change', handleCsvUpload);
+
 
 }
 
@@ -239,5 +243,32 @@ const isFormValid = () => {
 
 const isEmpty = value => value && value.trim() !== '' ? false : true;
 const isEmptyList = value => value && value.length > 0 ? false : true;
+
+const handleCsvUpload = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+        const contents = e.target.result;
+        const lines = contents.split("\n");
+
+        for (let i = 0; i < lines.length; i++) {
+            const rowData = lines[i].split(",");
+
+            state.tasks = [...state.tasks, {
+                epicLink: rowData[0],
+                taskLink: rowData[1],
+                taskDescription: rowData[2],
+                publicId: buildUniqueId('task')
+
+            }]
+        }
+        renderTaskList();
+    };
+
+    reader.readAsText(file);
+    uploadCsv.value = "";
+
+}
 
 document.addEventListener('DOMContentLoaded', init);

@@ -42,6 +42,12 @@
                 </div> -->
                 
                 <h5>Tasks</h5>
+                <div class="file-field input-field">
+                    <div class = "btn">
+                        <span>Upload CSV</span>
+                        <input id="upload-csv" type="file" />
+                    </div>
+                </div>
                 <div class="form-width row ">
                     <div class="col s2">
                         <input id="epicLink" placeholder="Epic Link" name="epicLink" type="text" class="input-field "/>
