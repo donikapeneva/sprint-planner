@@ -1,42 +1,33 @@
 # Sprint Planner
 POC project
+WEB Technologies (FMI course project)
 
-# Използвани технологии
+# Technologies
 ```
 Front-End: html / css / javascript
 Back-End: PHP
 DB: MySql
 ```
 
-# Инсталация и настройки
+# Instalation and Setup
 
-_инструкции XAMPP:_
-  - стартиране на Apache 
-  - стартиране на MySQL
+_XAMPP:_
+  - start Apache 
+  - start MySQL
 
-_настройка на база данни_
-- инициализиране на database sprint_planner 
+_database_
+- database sprint_planner 
 ```
 create database sprint_planner;
 ```
-- създаване на таблиците на приложението
-- посетете този адрес, който ще изпълни подготовката 
+- prepopulated data (auto)
   ```
   localhost/sprint-planner/repository/db/DatabaseInit.php
   ```
-  - ако авторът на този документ не е забравил да настрои скриптовете, в базата ще има заредени данни 
-  - ако все пак е забравил, изпълнете следните стъпки 
-  - копирайте съдържанието на файла  
-    ```
-    V2__prepopulate_users_and_sprint
-    (sprint-planner/repository/db/db-scripts)
-    ```
-  - отворете php my admit страницата  http://localhost/phpmyadmin/
-  - отворете новосъздадената база sprint_planner и изпълнете съдържанието от скрипта в SQL прозорец
 
-Време е за планиране на спринт :)
+Time for Sprint Planning :)
 
-посетете http://localhost/sprint-planner/ 
+go to http://localhost/sprint-planner/ 
 
-# Кратко ръководство на потребителя
-Документация и повече информация може да намерите в документа _**w17prj_SI_REQ_final**_
+# User Documentation
+root folder > _**w17prj_SI_REQ_final**_
