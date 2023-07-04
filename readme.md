@@ -1,6 +1,5 @@
 # Sprint Planner
-POC project
-WEB Technologies (FMI course project)
+POC project | WEB Technologies (FMI course project)
 
 # Technologies
 ```
